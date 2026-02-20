@@ -12,7 +12,7 @@ import { PiFolderSimplePlusBold } from "react-icons/pi";
 const Aside = () => {
   return (
     <>
-    <div className='bg-[#181818] w-1/5 h-screen text-white absolute font-sans'>
+    <div className='bg-[#181818] min-w-1/5 h-screen text-white  font-sans'>
       <div className='flex justify-between '>
 
         <img src={noteslogo} className="px-5 pt-[7%]" />
