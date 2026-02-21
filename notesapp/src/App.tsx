@@ -1,19 +1,19 @@
 
 import './App.css'
 import Aside from './components/Aside';
-import Recentnotes from './components/Recentnotes';
+import Middle from './components/Mid';
+// import Recentnotes from './components/Recentnotes';
+import RightSide from './components/Right';
 
 function App() {
 
   return (
     <>
     < div className='flex w-full h-screen bg-[#1C1C1C] overflow-hidden' >
-    
       <Aside />
-     
-
-    <Recentnotes />
-
+      <Middle />
+      <RightSide />
+      {/* <Recentnotes /> */}
     </div>
     </>
   )
