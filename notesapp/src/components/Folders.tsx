@@ -1,12 +1,11 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import Card from './Card'
+import React, { useEffect, useState } from 'react'
+// import api from '../Api/API'
 import type { NotesType } from '../types/types'
-import { TbFileText } from "react-icons/tb";
+import axios from 'axios';
 
-const Recentnotes = () => {
-    const API = 'https://nowted-server.remotestate.com/notes/recent' 
-  // const API = 'https://nowted-server.remotestate.com/folders' 
+const folders = () => {
+
+    const API = 'https://nowted-server.remotestate.com/folders';
 
   const [rec, setRec] = useState<NotesType[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -40,18 +39,11 @@ const Recentnotes = () => {
     getnotes();
   }, [])
 
-  const recent = rec.map((elem) => (
-        <div key={elem.id} className="mb-2">
-          <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  py-2.5 text-zinc-300 hover:bg-red-800 hover:text-amber-50'>
-          <TbFileText /> <button className='text-sm font-bold '>{elem.title}</button>
-          </div>
-        </div>
-      ))
-
   return (
-    
-    <>{recent}</>
+    <div>
+      
+    </div>
   )
 }
 
-export default Recentnotes
+export default folders

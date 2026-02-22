@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import noteslogo from '../assets/logo.svg'
 import { IoSearch } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
@@ -7,11 +7,15 @@ import { TbStar } from "react-icons/tb";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { FiArchive } from "react-icons/fi";
 import { PiFolderSimplePlusBold } from "react-icons/pi";
+// import type { NotesType } from '../types/types';
+// import axios from 'axios';
+import Recentnotes from './Recentnotes';
 
 
 const Aside = () => {
   return (
     <>
+
     <div className='bg-[#181818] min-w-1/5 h-screen text-white  font-sans'>
       <div className='flex justify-between '>
 
@@ -30,9 +34,8 @@ const Aside = () => {
       </div>
       <div>
       <h4 className='text-zinc-300 px-8 text-sm font-bold pt-5 '>Recents</h4>
-      <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  py-2.5 text-zinc-300 hover:bg-red-800 hover:text-amber-50'>
-        <TbFileText /> <button className='text-sm font-bold '>Reflection</button>
-      </div>
+      {/* {recent} */}
+      <Recentnotes />
       </div>
       <div className='flex justify-between items-center text-2xl'>
         <h4 className='text-zinc-300 px-8 text-sm font-bold  pt-5'>Folders</h4>

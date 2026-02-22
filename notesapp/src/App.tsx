@@ -11,9 +11,9 @@ function App() {
     <>
     < div className='flex w-full h-screen bg-[#1C1C1C] overflow-hidden' >
       <Aside />
+      {/* <Recentnotes /> */}
       <Middle />
       <RightSide />
-      {/* <Recentnotes /> */}
     </div>
     </>
   )

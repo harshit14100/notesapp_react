@@ -11,7 +11,7 @@ const {title, preview, updateddate} = notesdata
   return (
 <div className="p-3">
 
-      <div className='bg-[#222322] text-amber-50  px-5 py-6 gap-12 '>
+      <div className='w-full p-5 bg-white/5  border border-white/5 hover:bg-secondary-hover cursor-pointer transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-red-600/40 '>
         <h2 className='font-bold'>{title}</h2>
         <div className=" flex flex-wrap gap-x-3.5">
         <span >{formattedDate}</span>
