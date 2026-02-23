@@ -9,10 +9,16 @@ import { FiArchive } from "react-icons/fi";
 import { PiFolderSimplePlusBold } from "react-icons/pi";
 // import type { NotesType } from '../types/types';
 // import axios from 'axios';
+import AddNote from './NewNote';
 import Recentnotes from './Recentnotes';
+import Folders from './Folders';
+import Newnotes from './NewNote';
 
+interface AsideProps {
+  onSelectFolder: (id: string) => void;
+}
 
-const Aside = () => {
+const Aside: React.FC<AsideProps> = ({ onSelectFolder }) => {
   return (
     <>
 
@@ -25,29 +31,24 @@ const Aside = () => {
         </button>
       </div>
       <div className='py-8 relative pl-8 font-bold '>
-      <button className='px-6 py-3 rounded w-[90%] bg-zinc-600 hover:bg-zinc-700 flex justify-center items-center gap-2 cursor-pointer'>
-        <div className='text-2xl '>
-        <IoMdAdd />
-        </div>
-         <h3 className='font-bold'>New Note</h3>
+      <button className='px-6 py-3 rounded w-[90%] bg-zinc-600 hover:bg-zinc-700 gap-2 '>
+        <AddNote  />
+        
          </button>
       </div>
       <div>
       <h4 className='text-zinc-300 px-8 text-sm font-bold pt-5 '>Recents</h4>
-      {/* {recent} */}
       <Recentnotes />
       </div>
       <div className='flex justify-between items-center text-2xl'>
         <h4 className='text-zinc-300 px-8 text-sm font-bold  pt-5'>Folders</h4>
         <div className='text-2xl px-6'>
           <button className='cursor-pointer'>
-         <PiFolderSimplePlusBold />
+         <PiFolderSimplePlusBold /> 
           </button>
       </div>
         </div>
-        <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  py-2.5 text-zinc-300 hover:bg-red-800 hover:text-amber-50'>
-        <TbFileText /> <h2 className='text-sm font-bold '>Reflection</h2>
-      </div>
+          <Folders onSelectFolder={onSelectFolder} />
       <div>
         <h4 className='text-zinc-300 px-8 text-sm font-bold  pt-5'>More</h4>
         <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  text-zinc-300 py-2.5 hover:bg-red-800 hover:text-amber-50'>

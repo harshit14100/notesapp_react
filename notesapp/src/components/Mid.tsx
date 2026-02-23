@@ -1,10 +1,17 @@
 import { useState, useEffect } from "react";
-import axios from "axios"; 
+// import axios from "axios"; 
+import { getRecentNotes, getNotesByFolder } from "../Api/GetApi"; 
 
-function Middle() {
+interface MiddleProps {
+
+  selectedfolderId: string | null;
+}
+
+function Middle({ selectedfolderId }: MiddleProps) {
+
   const currentTime = new Date().toLocaleDateString();
-  
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState<any[]>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -13,28 +20,14 @@ function Middle() {
       setIsLoading(true);
       setError("");
 
-      const response = await axios.get('https://nowted-server.remotestate.com/notes/recent');
-      setNotes(response.data.notes || response.data);
-
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      const mockData = [
-        {
-          id: 1,
-          title: "Reflection on the Month of June",
-          content: "It's hard to believe that June is already over...",
-        },
-        {
-          id: 2,
-          title: "Project proposal",
-          content: "This is a proposal for the Nowted app...",
-        },
-        {
-          id: 3,
-          title: "Travel itinerary",
-          content: "Planning the trip to Hawaii for next summer...",
-        },
-      ];
-      setNotes(mockData);
+      let data;
+      if (selectedfolderId) {
+        data = await getNotesByFolder(selectedfolderId);
+      } else {
+        data = await getRecentNotes();
+      }
+      
+      setNotes(data || []);
 
     } catch (err) {
       console.error("Fetch error:", err);
@@ -46,7 +39,7 @@ function Middle() {
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [selectedfolderId]);
 
   const skeletonArray = [1, 2, 3];
 
@@ -75,10 +68,7 @@ function Middle() {
 
         {isLoading ? (
           skeletonArray.map((item) => (
-            <div
-              key={item}
-              className="w-full p-5 bg-white/5 border border-white/5 animate-pulse "
-            >
+            <div key={item} className="w-full p-5 bg-white/5 border border-white/5 animate-pulse ">
               <div className="h-5 bg-gray-600 w-3/4 mb-3"></div>
               <div className="flex justify-between items-center mt-2">
                 <div className="h-3 bg-gray-600 rounded w-1/5"></div>
@@ -90,8 +80,7 @@ function Middle() {
           notes.map((note) => (
             <div
               key={note.id}
-              className="w-full p-5 bg-white/5 border border-white/5  hover:bg-secondary-hover cursor-pointer transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-red-600/40"
-            >
+              className="w-full p-5 bg-white/5 border border-white/5  hover:bg-secondary-hover cursor-pointer transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-red-600/40">
               <h4 className="text-m font-medium text-white mb-2 truncate">
                 {note.title}
               </h4>
@@ -99,7 +88,7 @@ function Middle() {
               <div className="flex justify-between items-center text-[12px] text-gray-400">
                 <p>{currentTime}</p>
                 <p className="truncate ml-3.75 opacity-70">
-                  {note.content.substring(0, 30)}...
+                  {note.preview?.substring(0, 30) || "No content"}...
                 </p>
               </div>
             </div>

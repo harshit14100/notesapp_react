@@ -1,49 +1,63 @@
-import React, { useEffect, useState } from 'react'
-// import api from '../Api/API'
-import type { NotesType } from '../types/types'
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { getFolders } from '../Api/GetApi'; 
+import { PiFolderSimpleBold } from "react-icons/pi"; 
 
-const folders = () => {
+interface FoldersProps {
+  onSelectFolder: (id: string) => void;
+}
 
-    const API = 'https://nowted-server.remotestate.com/folders';
+const Folders: React.FC<FoldersProps> = ({ onSelectFolder }) => {
+  const [folders, setFolders] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const [rec, setRec] = useState<NotesType[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  
-  const getnotes = async () => {
+  const fetchFolders = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(API);
-      const notesData = response.data.recentNotes || response.data;
-
-      console.log((response.data.recentNotes));
-      // console.log("getnotes is running");
+      console.log(folders);
       
-      if (Array.isArray(notesData)) {
-        setRec(notesData);
+
+      const data = await getFolders(); 
+      
+      if (Array.isArray(data)) {
+        setFolders(data);
       } else {
-        setRec([]);
-        console.error("Expected an array, but received:", notesData);
+        setFolders([]);
       }
     } catch (err) {
-      console.error("Failed to fetch notes:", err);
-      setError('Failed to load notes.')
+      console.error("Failed to fetch folders:", err);
+      setError('Failed to load folders.');
     } finally {
       setIsLoading(false);
     }
   };
   
   useEffect(() => {
-    getnotes();
-  }, [])
+    fetchFolders();
+  }, []);
+
+  if (isLoading) return <div className='pl-8 text-sm text-zinc-400'>Loading folders...</div>;
+  if (error) return <div className='pl-8 text-sm text-red-500'>{error}</div>;
 
   return (
     <div>
-      
+      {folders.length === 0 ? (
+        <p className='pl-8 text-sm text-zinc-400'>No folders found.</p>
+      ) : (
+        folders.map((folderItem, index) => (
+          <div key={folderItem.id || index}>
+            <div 
+              onClick={() => onSelectFolder(folderItem.id)}
+              className='flex items-center gap-3.5 px-6 py-2.5 text-2xl cursor-pointer text-zinc-300 hover:bg-red-800 hover:text-amber-50'
+            >
+              <PiFolderSimpleBold /> 
+              <h2 className='text-sm font-bold'>{folderItem.name}</h2> 
+            </div>
+          </div>
+        ))
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default folders
+export default Folders;

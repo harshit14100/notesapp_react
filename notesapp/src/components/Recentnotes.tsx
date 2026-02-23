@@ -5,7 +5,7 @@ import type { NotesType } from '../types/types'
 import { TbFileText } from "react-icons/tb";
 
 const Recentnotes = () => {
-    const API = 'https://nowted-server.remotestate.com/notes/recent' 
+  const API = 'https://nowted-server.remotestate.com/notes/recent' 
   // const API = 'https://nowted-server.remotestate.com/folders' 
 
   const [rec, setRec] = useState<NotesType[]>([])
