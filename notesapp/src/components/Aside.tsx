@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import noteslogo from '../assets/logo.svg'
 import { IoSearch } from "react-icons/io5";
-import { IoMdAdd } from "react-icons/io";
-import { TbFileText } from "react-icons/tb";
 import { TbStar } from "react-icons/tb";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { FiArchive } from "react-icons/fi";
@@ -12,13 +10,32 @@ import { PiFolderSimplePlusBold } from "react-icons/pi";
 import AddNote from './NewNote';
 import Recentnotes from './Recentnotes';
 import Folders from './Folders';
-import Newnotes from './NewNote';
+import NewFolder from "./NewFolder";
+import { getFolders } from "../Api/API";
 
 interface AsideProps {
   onSelectFolder: (id: string) => void;
+  selectedFolderId: string | null;
 }
 
-const Aside: React.FC<AsideProps> = ({ onSelectFolder }) => {
+
+
+const Aside: React.FC<AsideProps> = ({ onSelectFolder ,selectedFolderId }) => {
+   const [folders, setFolders] = useState<any[]>([]);
+
+   useEffect(() => {
+    const fetchFolders = async () => {
+      const data = await getFolders();
+      setFolders(data || []);
+    };
+
+    fetchFolders();
+  }, []);
+
+  const handleFolderCreated = (newFolder: any) => {
+    setFolders((prev) => [...prev, newFolder]);
+    onSelectFolder(newFolder.id); // auto open
+  };
   return (
     <>
 
@@ -41,8 +58,15 @@ const Aside: React.FC<AsideProps> = ({ onSelectFolder }) => {
       <Recentnotes />
       </div>
       <div className='flex justify-between items-center text-2xl'>
-        <h4 className='text-zinc-300 px-8 text-sm font-bold  pt-5'>Folders</h4>
-        <div className='text-2xl px-6'>
+        <h4 className='text-zinc-300 px-8 text-sm font-bold  pt-1'>Folders</h4>
+        {/* <NewFolder onFolderCreated={handleFolderCreated} />
+
+      <Folders
+        folders={folders}
+        onSelectFolder={onSelectFolder}
+        selectedFolderId={selectedFolderId}
+      /> */}
+        <div className='text-2xl px-6 '>
           <button className='cursor-pointer'>
          <PiFolderSimplePlusBold /> 
           </button>
@@ -67,3 +91,5 @@ const Aside: React.FC<AsideProps> = ({ onSelectFolder }) => {
 }
 
 export default Aside
+
+

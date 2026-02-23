@@ -38,20 +38,41 @@ function Middle({ selectedfolderId }: MiddleProps) {
   };
 
   useEffect(() => {
-    fetchNotes();
-  }, [selectedfolderId]);
+  const fetchNotes = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
+
+      let data;
+      if (selectedfolderId) {
+        data = await getNotesByFolder(selectedfolderId);
+      } else {
+        data = await getRecentNotes();
+      }
+
+      setNotes(data || []);
+    } catch (err) {
+      setError("Failed to load notes.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchNotes();
+}, [selectedfolderId]);
+
 
   const skeletonArray = [1, 2, 3];
 
   return (
     <div className="w-full h-full bg-[#1C1C1C] flex flex-col">
       <div className="w-full p-[3%] pb-[4%]">
-        <div className="flex justify-between items-center mb-5">
-          <h2 className="text-xl font-semibold text-white">Personal</h2>
-          {!isLoading && (
-            <p className="text-gray-400 text-sm">{notes.length} Notes</p>
-          )}
-        </div>
+      <div className="flex justify-between items-center mb-5">
+       <h2 className="text-xl font-semibold text-white">Personal</h2>
+        {!isLoading && (
+        <p className="text-gray-400 text-sm">{notes.length} Notes</p>
+      )}
+      </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3.75 pb-7.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
