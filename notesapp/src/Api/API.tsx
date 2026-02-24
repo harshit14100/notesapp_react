@@ -4,8 +4,8 @@ const api = axios.create({
   baseURL: "https://nowted-server.remotestate.com",
 });
 export const getFolders = async () => {
-  const res = await fetch("/api/folders");
-  return res.json();
+  const res = await api.get("/api/folders");
+  return res.data;
 };
 
 export default api;

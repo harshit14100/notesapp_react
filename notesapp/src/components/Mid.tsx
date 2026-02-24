@@ -5,9 +5,11 @@ import { getRecentNotes, getNotesByFolder } from "../Api/GetApi";
 interface MiddleProps {
 
   selectedfolderId: string | null;
+  selectedFoldername: string | null;
+
 }
 
-function Middle({ selectedfolderId }: MiddleProps) {
+function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
 
   const currentTime = new Date().toLocaleDateString();
   const [notes, setNotes] = useState<any[]>([]);
@@ -35,27 +37,29 @@ function Middle({ selectedfolderId }: MiddleProps) {
     } finally {
       setIsLoading(false);
     }
+    
   };
-
+  
   useEffect(() => {
-  const fetchNotes = async () => {
-    try {
-      setIsLoading(true);
-      setError("");
-
-      let data;
-      if (selectedfolderId) {
-        data = await getNotesByFolder(selectedfolderId);
-      } else {
-        data = await getRecentNotes();
+    const fetchNotes = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+        
+        let data;
+        if (selectedfolderId) {
+          data = await getNotesByFolder(selectedfolderId);
+        } else {
+          data = await getRecentNotes();
+        }
+        
+        setNotes(data || []);
+      } catch (err) {
+        setError("Failed to load notes.");
+      } finally {
+        setIsLoading(false);
       }
-
-      setNotes(data || []);
-    } catch (err) {
-      setError("Failed to load notes.");
-    } finally {
-      setIsLoading(false);
-    }
+      // console.log(selectedfoldername);
   };
 
   fetchNotes();
@@ -65,10 +69,12 @@ function Middle({ selectedfolderId }: MiddleProps) {
   const skeletonArray = [1, 2, 3];
 
   return (
-    <div className="w-full h-full bg-[#1C1C1C] flex flex-col">
+    <div className="w-[50%] h-full bg-[#1C1C1C] flex flex-col">
       <div className="w-full p-[3%] pb-[4%]">
       <div className="flex justify-between items-center mb-5">
-       <h2 className="text-xl font-semibold text-white">Personal</h2>
+       <h2 className="text-xl font-semibold text-white">
+          {selectedFoldername ? selectedFoldername : "Recents"}
+      </h2>
         {!isLoading && (
         <p className="text-gray-400 text-sm">{notes.length} Notes</p>
       )}

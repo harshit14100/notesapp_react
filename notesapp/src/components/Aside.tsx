@@ -12,15 +12,21 @@ import Recentnotes from './Recentnotes';
 import Folders from './Folders';
 import NewFolder from "./NewFolder";
 import { getFolders } from "../Api/API";
+import '../App.css'
 
 interface AsideProps {
-  onSelectFolder: (id: string) => void;
+  onSelectFolder: (id: string, name: string) => void;
   selectedFolderId: string | null;
+  selectedFolderName: string | null;
 }
 
 
 
-const Aside: React.FC<AsideProps> = ({ onSelectFolder ,selectedFolderId }) => {
+const Aside: React.FC<AsideProps> = ({
+  onSelectFolder,
+  selectedFolderId,
+  selectedFolderName
+}) => {
    const [folders, setFolders] = useState<any[]>([]);
 
    useEffect(() => {
@@ -34,12 +40,13 @@ const Aside: React.FC<AsideProps> = ({ onSelectFolder ,selectedFolderId }) => {
 
   const handleFolderCreated = (newFolder: any) => {
     setFolders((prev) => [...prev, newFolder]);
-    onSelectFolder(newFolder.id); // auto open
+    onSelectFolder(newFolder.id,newFolder.name); 
   };
   return (
     <>
 
-    <div className='bg-[#181818] min-w-1/5 h-screen text-white  font-sans'>
+    <div className='bg-[#181818] min-w-1/5 h-screen text-white  font-sans flex flex-col justify-between overflow-hidden'>
+        <div>
       <div className='flex justify-between '>
 
         <img src={noteslogo} className="px-5 pt-[7%]" />
@@ -57,23 +64,37 @@ const Aside: React.FC<AsideProps> = ({ onSelectFolder ,selectedFolderId }) => {
       <h4 className='text-zinc-300 px-8 text-sm font-bold pt-5 '>Recents</h4>
       <Recentnotes />
       </div>
-      <div className='flex justify-between items-center text-2xl'>
-        <h4 className='text-zinc-300 px-8 text-sm font-bold  pt-1'>Folders</h4>
-        {/* <NewFolder onFolderCreated={handleFolderCreated} />
+      <div className="flex flex-col flex-1 overflow-hidden h-87">
+  <div className="flex justify-between items-center ">
+    <h4 className="text-zinc-300 px-8 text-sm font-bold pt-1">
+      Folders
+    </h4>
+    <div className="px-6">
+      <button className="cursor-pointer text-2xl">
+        <PiFolderSimplePlusBold />
+      </button>
+    </div>
+  </div>
 
-      <Folders
-        folders={folders}
-        onSelectFolder={onSelectFolder}
-        selectedFolderId={selectedFolderId}
-      /> */}
-        <div className='text-2xl px-6 '>
-          <button className='cursor-pointer'>
-         <PiFolderSimplePlusBold /> 
-          </button>
-      </div>
-        </div>
-          <Folders onSelectFolder={onSelectFolder} />
-      <div>
+  <div className="px-6">
+    <NewFolder onFolderCreated={handleFolderCreated} />
+  </div>
+
+  <div className="flex-1 overflow-y-auto px-4 scrollbar-hide">
+    <Folders
+  folders={folders}
+  onSelectFolder={onSelectFolder}
+  selectedFolderId={selectedFolderId}
+  selectedFoldername={selectedFolderName}
+/>
+  </div>
+</div>
+
+          </div>
+
+          <div>
+
+      <div className=''>
         <h4 className='text-zinc-300 px-8 text-sm font-bold  pt-5'>More</h4>
         <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  text-zinc-300 py-2.5 hover:bg-red-800 hover:text-amber-50'>
         <TbStar /> <button className='text-sm font-bold '>Favorites</button>
@@ -84,6 +105,7 @@ const Aside: React.FC<AsideProps> = ({ onSelectFolder ,selectedFolderId }) => {
       <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  py-2.5 text-zinc-300 hover:bg-red-800 hover:text-amber-50'>
         <FiArchive /> <button className='text-sm font-bold '>Archived Notes</button>
       </div>
+          </div>
       </div>
     </div>
     </>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { IoMdAdd } from "react-icons/io";
+import { createNote } from '../Api/PostApi';
 
 interface AddNoteProps {
     onNoteAdded?: () => void; 
@@ -49,7 +50,7 @@ const AddNote: React.FC<AddNoteProps> = ({ onNoteAdded }) => {
     }
   };
 
-  const handleCancel = () => {
+  const Cancel = () => {
     setIsFormOpen(false);
     setTitle('');
     setContent('');
@@ -119,7 +120,7 @@ const AddNote: React.FC<AddNoteProps> = ({ onNoteAdded }) => {
                 
                 <button 
                   type="button" 
-                  onClick={handleCancel} 
+                  onClick={Cancel} 
                   disabled={isSubmitting} 
                   className="px-4 py-2 font-bold transition-colors bg-transparent border rounded-md text-zinc-300 border-zinc-700 hover:bg-zinc-800 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
                 >
