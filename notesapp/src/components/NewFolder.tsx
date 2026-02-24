@@ -14,7 +14,7 @@ const NewFolder= ({ onFolderCreated }: Props)=> {
   try {
     const newFolder = await createFolder(name);
 
-    console.log("CREATED:", newFolder); 
+    // console.log("CREATED:", newFolder); 
 
     onFolderCreated(newFolder);
     setName("");

@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 // import { IoMdAdd } from "react-icons/io";
 // import { createNote } from '../Api/PostApi';
 
-interface MiddleProps {
+export type MiddleProps = {
   selectedfolderId: string | null;
   selectedFoldername: string | null;
 }
@@ -62,6 +62,8 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
       console.error(err);
     }
   };
+  // console.log(selectedFoldername);
+  
 
   const skeletonArray = [1, 2, 3];
 

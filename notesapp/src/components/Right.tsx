@@ -2,8 +2,9 @@
 import { PiDotsThreeCircle } from "react-icons/pi";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegFolder } from "react-icons/fa";
+import type {MiddleProps, selectfolderId } from '../components/Mid'
 
-function RightSide() {
+const RightSide = ({selectedfolderId, selectedFoldername } : MiddleProps) => {
   const currentTime = new Date().toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "2-digit",
