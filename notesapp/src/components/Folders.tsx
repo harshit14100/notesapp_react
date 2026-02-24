@@ -7,7 +7,7 @@ interface FoldersProps {
 }
 
 const Folders: React.FC<FoldersProps> = ({ onSelectFolder }) => {
-  const [folders, setFolders] = useState<any[]>([]);
+  const [folders, setFolders] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 

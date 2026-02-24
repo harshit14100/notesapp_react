@@ -29,18 +29,19 @@ const Aside: React.FC<AsideProps> = ({
 }) => {
    const [folders, setFolders] = useState<any[]>([]);
 
-   useEffect(() => {
-    const fetchFolders = async () => {
-      const data = await getFolders();
-      setFolders(data || []);
-    };
-
+   const fetchFolders = async () => {
+    const data = await getFolders();
+    setFolders(data || []);
+  };
+    
+    useEffect(() => {
     fetchFolders();
   }, []);
 
-  const handleFolderCreated = (newFolder: any) => {
+  const handleFolderCreated = async (newFolder: any) => {
     setFolders((prev) => [...prev, newFolder]);
     onSelectFolder(newFolder.id,newFolder.name); 
+    await fetchFolders();
   };
   return (
     <>

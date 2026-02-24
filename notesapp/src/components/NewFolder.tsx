@@ -2,23 +2,27 @@ import { useState } from "react";
 import { createFolder } from "../Api/PostApi"; 
 
 interface Props {
-  onFolderCreated: (folder: any) => void;
+  onFolderCreated: (folder: string) => void;
 }
 
-function NewFolder({ onFolderCreated }: Props) {
+const NewFolder= ({ onFolderCreated }: Props)=> {
   const [name, setName] = useState("");
 
   const handleCreate = async () => {
-    if (!name.trim()) return;
+  if (!name.trim()) return;
 
-    try {
-      const newFolder = await createFolder(name); 
-      onFolderCreated(newFolder); 
-      setName(""); 
-    } catch (err) {
-      console.error("Error creating folder", err);
-    }
-  };
+  try {
+    const newFolder = await createFolder(name);
+
+    console.log("CREATED:", newFolder); 
+
+    onFolderCreated(newFolder);
+    setName("");
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   return (
     <div className="flex gap-2 p-4">

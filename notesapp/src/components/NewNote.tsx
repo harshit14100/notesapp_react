@@ -8,15 +8,19 @@ interface AddNoteProps {
 }
 
 const AddNote: React.FC<AddNoteProps> = ({ onNoteAdded }) => {
-  const API = 'https://nowted-server.remotestate.com/notes';
+  // const API = 'https://nowted-server.remotestate.com/notes';
+  const API = createNote();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [id, setid] = useState('')
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  
+  const [folderId, setFolderId] = useState('');
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
 
@@ -30,6 +34,7 @@ const AddNote: React.FC<AddNoteProps> = ({ onNoteAdded }) => {
       setError('');
       
       await axios.post(API, {
+        id,
         title,
         content
       });

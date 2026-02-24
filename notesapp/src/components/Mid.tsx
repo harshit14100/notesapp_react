@@ -1,18 +1,26 @@
 import { useState, useEffect } from "react";
-// import axios from "axios"; 
-import { getRecentNotes, getNotesByFolder } from "../Api/GetApi"; 
+import { getRecentNotes, getNotesByFolder } from "../Api/GetApi";
+import { RiDeleteBin7Line } from "react-icons/ri";
+import { DeleteNote } from "../Api/Delete";
+import { useParams } from "react-router-dom";
+// import { IoMdAdd } from "react-icons/io";
+// import { createNote } from '../Api/PostApi';
 
 interface MiddleProps {
-
   selectedfolderId: string | null;
   selectedFoldername: string | null;
+}
 
+interface Note {
+  id: string;
+  title: string;
+  preview?: string;
 }
 
 function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
-
   const currentTime = new Date().toLocaleDateString();
-  const [notes, setNotes] = useState<any[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const { folderId } = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -23,48 +31,37 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
       setError("");
 
       let data;
-      if (selectedfolderId) {
-        data = await getNotesByFolder(selectedfolderId);
+      const activeFolder = selectedfolderId || folderId;
+
+      if (activeFolder) {
+        data = await getNotesByFolder(activeFolder);
       } else {
         data = await getRecentNotes();
       }
+
+      // console.log(data);
       
       setNotes(data || []);
-
     } catch (err) {
-      console.error("Fetch error:", err);
-      setError("Failed to load notes. Please try again later.");
+      console.error(err);
+      setError("Failed to load notes.");
     } finally {
       setIsLoading(false);
     }
-    
   };
-  
+
   useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        setIsLoading(true);
-        setError("");
-        
-        let data;
-        if (selectedfolderId) {
-          data = await getNotesByFolder(selectedfolderId);
-        } else {
-          data = await getRecentNotes();
-        }
-        
-        setNotes(data || []);
-      } catch (err) {
-        setError("Failed to load notes.");
-      } finally {
-        setIsLoading(false);
-      }
-      // console.log(selectedfoldername);
+    fetchNotes();
+  }, [selectedfolderId, folderId]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await DeleteNote(id);
+      fetchNotes(); 
+    } catch (err) {
+      console.error(err);
+    }
   };
-
-  fetchNotes();
-}, [selectedfolderId]);
-
 
   const skeletonArray = [1, 2, 3];
 
@@ -72,12 +69,14 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
     <div className="w-[50%] h-full bg-[#1C1C1C] flex flex-col">
       <div className="w-full p-[3%] pb-[4%]">
       <div className="flex justify-between items-center mb-5">
-       <h2 className="text-xl font-semibold text-white">
-          {selectedFoldername ? selectedFoldername : "Recents"}
-      </h2>
-        {!isLoading && (
-        <p className="text-gray-400 text-sm">{notes.length} Notes</p>
-      )}
+        <h2 className="text-xl font-semibold text-white">
+            {selectedFoldername || "Recents"}
+         </h2>
+
+          {!isLoading && (
+            <p className="text-gray-400 text-sm">{notes.length} Notes</p>
+          )}
+
       </div>
       </div>
 
@@ -87,6 +86,7 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
           <div className="p-4 bg-red-900/20 border border-red-500/50 rounded text-red-400">
             {error}
           </div>
+
         )}
 
         {!isLoading && !error && notes.length === 0 && (
@@ -95,7 +95,9 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
 
         {isLoading ? (
           skeletonArray.map((item) => (
-            <div key={item} className="w-full p-5 bg-white/5 border border-white/5 animate-pulse ">
+            <div
+              key={item}
+              className="w-full p-5 bg-white/5 border border-white/5 animate-pulse">
               <div className="h-5 bg-gray-600 w-3/4 mb-3"></div>
               <div className="flex justify-between items-center mt-2">
                 <div className="h-3 bg-gray-600 rounded w-1/5"></div>
@@ -107,10 +109,17 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
           notes.map((note) => (
             <div
               key={note.id}
-              className="w-full p-5 bg-white/5 border border-white/5  hover:bg-secondary-hover cursor-pointer transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-red-600/40">
-              <h4 className="text-m font-medium text-white mb-2 truncate">
-                {note.title}
-              </h4>
+              className="w-full p-5 bg-white/5 border border-white/5 hover:bg-secondary-hover cursor-pointer transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-red-600/40"
+            >
+              <div className="flex justify-between">
+                <h4 className="text-m font-medium text-white mb-2 truncate">
+                  {note.title}
+                </h4>
+
+                <button onClick={() => handleDelete(note.id)}>
+                  <RiDeleteBin7Line className="text-sm text-white hover:text-xl hover:text-red-500" />
+                </button>
+              </div>
 
               <div className="flex justify-between items-center text-[12px] text-gray-400">
                 <p>{currentTime}</p>
