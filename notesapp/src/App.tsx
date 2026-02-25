@@ -5,14 +5,15 @@
 // import Rightsection from './components/Rightsectionbase'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/home";
+// import RightSide from "./components/Right"; 
 
 function App() {
     const router = createBrowserRouter([
     {
       path:'/',
-      element:<Home/>  
-    } ,
-    {
+      element:<Home/>,  
+      children:[
+         {
       path:"/:folderId", 
       element:<Home/>
     },
@@ -23,7 +24,9 @@ function App() {
     {
        path:"*",
         element:""
-     }
+     } ]
+    } ,
+    
   ]);
 
   

@@ -96,15 +96,15 @@ const Aside: React.FC<AsideProps> = ({
 
           <div>
 
-      <div className=''>
+      <div className='pb-20'>
         <h4 className='text-zinc-300 px-8 text-sm font-bold  pt-5'>More</h4>
-        <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  text-zinc-300 py-2.5 hover:bg-red-800 hover:text-amber-50'>
+        <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  text-zinc-300 py-2.5 hover:bg-primary-hover hover:text-amber-50'>
         <TbStar /> <button className='text-sm font-bold '>Favorites</button>
       </div>
-      <div className='flex px-6 gap-3.5 text-2xl text-zinc-300 cursor-pointer items-center  py-2.5 hover:bg-red-800 hover:text-amber-50 '>
+      <div className='flex px-6 gap-3.5 text-2xl text-zinc-300 cursor-pointer items-center  py-2.5 hover:bg-primary-hover hover:text-amber-50 '>
         <RiDeleteBin7Line /> <button className='text-sm font-bold   '>Trash</button>
       </div>
-      <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  py-2.5 text-zinc-300 hover:bg-red-800 hover:text-amber-50'>
+      <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  py-2.5 text-zinc-300 hover:bg-primary-hover hover:text-amber-50'>
         <FiArchive /> <button className='text-sm font-bold '>Archived Notes</button>
       </div>
           </div>

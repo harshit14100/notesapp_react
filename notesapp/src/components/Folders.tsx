@@ -47,8 +47,8 @@ const Folders: React.FC<FoldersProps> = ({ onSelectFolder }) => {
         folders.map((folderItem, index) => (
           <div key={folderItem.id || index}>
             <div 
-              onClick={() => onSelectFolder(folderItem.id, folderItem.name)}
-              className='flex items-center gap-3.5 px-6 py-2.5 text-2xl cursor-pointer text-zinc-300 hover:bg-red-800 hover:text-amber-50'
+            onClick={() => onSelectFolder(folderItem.id, folderItem.name)}
+              className='flex items-center gap-3.5 px-6 py-2.5 text-2xl cursor-pointer text-zinc-300 hover:bg-primary-hover hover:text-amber-50'
             >
               <PiFolderSimpleBold /> 
               <h2 className='text-sm font-bold'>{folderItem.name}</h2> 

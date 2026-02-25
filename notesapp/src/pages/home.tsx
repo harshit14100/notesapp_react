@@ -2,6 +2,7 @@ import { useState } from "react";
 import Aside from "../components/Aside";
 import Middle from "../components/Mid";
   import RightSide from "../components/Rightsectionbase";
+// import { Outlet } from "react-router-dom";
 
 function Home() {
     const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -19,6 +20,7 @@ function Home() {
       selectedFolderId={selectedFolderId}
       selectfoldername={selectedFolderName}/>
       </div>
+      {/* <Outlet    /> */}
       <div className="w-[25%] h-full border-r border-white/5">
         <Middle 
       selectedfolderId={selectedFolderId}

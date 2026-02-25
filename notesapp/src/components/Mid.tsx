@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getRecentNotes, getNotesByFolder } from "../Api/GetApi";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { DeleteNote } from "../Api/Delete";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams  } from "react-router-dom";
 // import AddNote from "./NewNote";
 // import { IoMdAdd } from "react-icons/io";
 // import { createNote } from '../Api/PostApi';
@@ -16,12 +16,14 @@ interface Note {
   id: string;
   title: string;
   preview?: string;
+  createdAt: string;
 }
 
 function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
   const currentTime = new Date().toLocaleDateString();
   const [notes, setNotes] = useState<Note[]>([]);
-  const { folderId } = useParams();
+  const { folderId, noteId } = useParams();
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -55,16 +57,22 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
     fetchNotes();
   }, [selectedfolderId, folderId]);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation(); 
     try {
       await DeleteNote(id);
       fetchNotes(); 
+      if (noteId === id) navigate(`/${folderId || 'recent'}`); 
     } catch (err) {
       console.error(err);
     }
   };
   // console.log(selectedFoldername);
   
+  const handleNoteClick = (id: string) => {
+    const activeFolder = selectedfolderId || folderId || "recent";
+    navigate(`/${activeFolder}/${id}`); 
+  };
 
   const skeletonArray = [1, 2, 3];
 
@@ -112,6 +120,7 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
           notes.map((note) => (
             <div
               key={note.id}
+              onClick={() => handleNoteClick(note.id)}
               className="w-full p-5 bg-white/5 border border-white/5 hover:bg-secondary-hover cursor-pointer transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg hover:shadow-red-600/40"
             >
               <div className="flex justify-between">
@@ -119,7 +128,7 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
                   {note.title}
                 </h4>
 
-                <button onClick={() => handleDelete(note.id)}>
+                <button onClick={(e) => handleDelete(e, note.id)}>
                   <RiDeleteBin7Line className="text-sm text-white hover:text-xl hover:text-red-500" />
                 </button>
               </div>

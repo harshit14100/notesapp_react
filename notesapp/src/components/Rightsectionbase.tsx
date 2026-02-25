@@ -8,9 +8,13 @@ import { TbFileText } from "react-icons/tb";
 import { PiDotsThreeCircle } from "react-icons/pi";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegFolder } from "react-icons/fa";
-
-const RightSide = () => {
-  const { noteId } = useParams();
+  
+  
+  
+  
+  const RightSide = () => {
+    const { noteId } = useParams();
+    const [isLoading, setIsLoading] = useState(false); 
   const [note, setnote] = useState<any>(null);
 
   const loadNote = async () => {
@@ -20,6 +24,23 @@ const RightSide = () => {
   };
 
   useEffect(() => {
+    const loadNote = async () => {
+      if (!noteId || noteId === "recent") {
+        setnote(null);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const res = await getNoteById(noteId);
+        setnote(res);
+      } catch (err) {
+        console.error("Error loading note:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadNote();
   }, [noteId]);
 
@@ -79,3 +100,6 @@ const RightSide = () => {
 };
 
 export default RightSide;
+
+
+
