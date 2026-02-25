@@ -1,6 +1,4 @@
 // const API = 'https://nowted-server.remotestate.com/notes';
-// const [content, setContent] = useState('');
-// const [folderId, setFolderId] = useState('');
 
 
 import React, { useState } from 'react';
@@ -13,7 +11,9 @@ interface AddNoteProps {
 }
 
 const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
-
+  
+  // const [content, setContent] = useState('');
+  // const [folderId, setFolderId] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -30,7 +30,7 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
     }
 
     if (!folderId) {
-      setError('No folder selected.');
+      setError('folder not selected.');
       return;
     }
 
@@ -44,14 +44,18 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
       setIsFormOpen(false);
 
       onNoteAdded?.(); 
-    } catch (err) {
-      console.error(err);
-      setError('Failed to save the note.');
-    } finally {
+    } catch (err: any) {
+  console.error("error:", err);
+
+  if (err.response) {
+    console.log("error:", err.response.data);
+  } 
+} finally {
       setIsSubmitting(false);
     }
   };
 
+  console.log("FolderId in AddNote:", folderId);
   const handleCancel = () => {
     setIsFormOpen(false);
     setTitle('');

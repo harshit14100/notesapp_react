@@ -1,30 +1,37 @@
-import { useState } from "react";
-import Aside from "./components/Aside";
-import Middle from "./components/Mid";
-import Right from "./components/Right";
+// import { useState } from "react";
+// import Aside from "./components/Aside";
+// import Middle from "./components/Mid";
+
+// import Rightsection from './components/Rightsectionbase'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./pages/home";
 
 function App() {
-  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
-  const [selectedFolderName, setSelectedFolderName] = useState<string | null>(null);
+    const router = createBrowserRouter([
+    {
+      path:'/',
+      element:<Home/>  
+    } ,
+    {
+      path:"/:folderId", 
+      element:<Home/>
+    },
+    {
+      path:"/:folderId/:noteId", 
+      element:<Home/>
+    },
+    {
+       path:"*",
+        element:""
+     }
+  ]);
 
-  const handleSelectFolder = (id: string, name: string) => {
-  setSelectedFolderId(id);
-  setSelectedFolderName(name);
-  };
   
-  return (
-    <div className="flex w-full h-screen">
-      
-      <Aside 
-      onSelectFolder={handleSelectFolder}
-      selectedFolderId={selectedFolderId}
-      selectfoldername={selectedFolderName}/>
-      <Middle 
-      selectedfolderId={selectedFolderId}
-      selectedFoldername={selectedFolderName}/>
-      <Right />
-      
-    </div>
+  
+  return (<>
+    <RouterProvider router={router} /> 
+      {/* <Right /> */}
+      </>
   );
 }
 

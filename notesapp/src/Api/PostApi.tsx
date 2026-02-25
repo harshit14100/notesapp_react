@@ -1,12 +1,11 @@
-import axios from "axios";
+// import axios from "axios";
 import api from "./API";
 
 export const createNote = async (
   folderId: string,
-  title: string,
-  content: string
-) => {
-  const res = await axios.post(`/notes`, {
+   title: string,
+    content: string) => {
+  const res = await api.post(`/notes`, {
     folderId,
     title,
     content

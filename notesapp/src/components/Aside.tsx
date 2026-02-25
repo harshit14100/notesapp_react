@@ -57,7 +57,8 @@ const Aside: React.FC<AsideProps> = ({
       </div>
       <div className='py-8 relative pl-8 font-bold '>
       <button className='px-6 py-3 rounded w-[90%] bg-zinc-600 hover:bg-zinc-700 gap-2 '>
-        <AddNote  />
+        <AddNote folderId={selectedFolderId} />
+        
         
          </button>
       </div>

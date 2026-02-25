@@ -3,6 +3,7 @@ import { getRecentNotes, getNotesByFolder } from "../Api/GetApi";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { DeleteNote } from "../Api/Delete";
 import { useParams } from "react-router-dom";
+// import AddNote from "./NewNote";
 // import { IoMdAdd } from "react-icons/io";
 // import { createNote } from '../Api/PostApi';
 
@@ -68,7 +69,7 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
   const skeletonArray = [1, 2, 3];
 
   return (
-    <div className="w-[50%] h-full bg-[#1C1C1C] flex flex-col">
+    <div className="w-[100%] h-full bg-[#1C1C1C] flex flex-col">
       <div className="w-full p-[3%] pb-[4%]">
       <div className="flex justify-between items-center mb-5">
         <h2 className="text-xl font-semibold text-white">
@@ -78,7 +79,7 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
           {!isLoading && (
             <p className="text-gray-400 text-sm">{notes.length} Notes</p>
           )}
-
+          {/* <AddNote folderId={selectedfolderId} onNoteAdded={fetchNotes} /> */}
       </div>
       </div>
 

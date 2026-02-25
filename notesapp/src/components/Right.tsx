@@ -4,6 +4,7 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegFolder } from "react-icons/fa";
 import type {MiddleProps, selectfolderId } from '../components/Mid'
 
+
 const RightSide = ({selectedfolderId, selectedFoldername } : MiddleProps) => {
   const currentTime = new Date().toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -43,7 +44,7 @@ const RightSide = ({selectedfolderId, selectedFoldername } : MiddleProps) => {
             <h3 className="text-xs font-semibold tracking-wider">Folder</h3>
           </div>
           <div className="text-white text-sm underline decoration-gray-600 underline-offset-4 font-bold">
-            Personal
+            {selectedFoldername}
           </div>
         </div>
       </div>
