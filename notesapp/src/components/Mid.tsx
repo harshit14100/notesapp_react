@@ -77,7 +77,7 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
   const skeletonArray = [1, 2, 3];
 
   return (
-    <div className="w-[100%] h-full bg-[#1C1C1C] flex flex-col">
+    <div className="w-[100%] h-full bg-secondary flex flex-col">
       <div className="w-full p-[3%] pb-[4%]">
       <div className="flex justify-between items-center mb-5">
         <h2 className="text-xl font-semibold text-white">

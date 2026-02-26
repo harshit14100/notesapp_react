@@ -1,27 +1,33 @@
 
 import { useEffect, useState } from "react";
 import { getNoteById } from "../Api/GetApi";
-import { useParams } from "react-router-dom";
-import { TbFileText } from "react-icons/tb";
+import { Navigate, useParams } from "react-router-dom";
+import { TbFileText, TbStar } from "react-icons/tb";
 
 
 import { PiDotsThreeCircle } from "react-icons/pi";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegFolder } from "react-icons/fa";
+import { FiArchive } from "react-icons/fi";
+import { RiDeleteBin7Line } from "react-icons/ri";
+// import { DeleteNote } from "../Api/Delete";
   
   
   
   
   const RightSide = () => {
     const { noteId } = useParams();
-    const [isLoading, setIsLoading] = useState(false); 
+    const [overlay, setoverlay] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false); 
   const [note, setnote] = useState<any>(null);
-
-  const loadNote = async () => {
-    if (!noteId) return;
-    const res = await getNoteById(noteId);
-    setnote(res);
-  };
+  // console.log(params );
+  
+  
+  useEffect(() => {
+  const handleClick = () => setoverlay(false);
+  window.addEventListener("click", handleClick);
+  return () => window.removeEventListener("click", handleClick);
+}, []);
 
   useEffect(() => {
     const loadNote = async () => {
@@ -47,7 +53,7 @@ import { FaRegFolder } from "react-icons/fa";
   if (!noteId || !note) {
     return (
       <div className="w-full h-full bg-[#181818] flex flex-col items-center justify-center gap-4">
-        <TbFileText   strokeWidth={0.8} size={100} className="text-secondary" />
+        <TbFileText   strokeWidth={0.8} size={100} className="text-primary" />
         <h2 className="text-white text-2xl font-semibold">
           Select a note to view
         </h2>
@@ -63,8 +69,31 @@ import { FaRegFolder } from "react-icons/fa";
     <div className="w-full h-full bg-[#181818] flex flex-col p-[5%] gap-7">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-white">{note.title}</h1>
-        <div className="cursor-pointer text-primary hover:text-white">
-          <PiDotsThreeCircle  size={30} />
+        <div className="cursor-pointer text-primary hover:text-white flex flex-col relative">
+          <PiDotsThreeCircle  size={30}
+          onClick={(e) => {
+          e.stopPropagation();
+          setoverlay((prev) => !prev);
+          }}
+          />
+          {overlay && (
+         <div className="absolute top-12 right-0 rounded-md p-4 w-60 text-md flex flex-col gap-4 bg-[#333333] text-white">
+            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover hobv">
+              <TbStar />
+              {"Add to Favorites"}
+            </button>
+            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover">
+              <FiArchive />
+              {"Archived"}
+            </button>
+            {/* <div className="divide-y divide-white/10"></div> */}
+            <hr className="w-50 border border-b-[#333333]"></hr>
+            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover hover:text-red-500">
+              <RiDeleteBin7Line/>
+              {"Delete"}
+            </button>
+          </div>
+        )}
         </div>
       </div>
 
@@ -91,7 +120,7 @@ import { FaRegFolder } from "react-icons/fa";
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <p className="text-secondary leading-relaxed text-base">
+        <p className="text-primary leading-relaxed text-base">
           {note.content}
         </p>
       </div>

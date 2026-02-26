@@ -1,6 +1,6 @@
 @import 'tailwindcss';
-@tailwind base;
-@tailwind components;
+/* @tailwind base; */
+/* @tailwind components; */
 @tailwind utilities;
 
 
@@ -8,9 +8,9 @@
 @theme {
   --color-primary: rgba(255, 255, 255, 0.6);
   --color-primary-hover: #9f0712;
-  --color-secondary: rgba(255, 255, 255, 1);
+  --color-secondary: #1C1C1C;
   --color-secondary-hover: rgba(255, 255, 255, 0.03);
-  --color-middle: rgba(255, 255, 255, 0.03);
+  --color-middle: #1C1C1C; //  gray in the middle  
   --color-middle-active: rgba(255, 255, 255, 0.1);
 }
 

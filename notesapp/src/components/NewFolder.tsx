@@ -34,9 +34,7 @@ const NewFolder= ({ onFolderCreated }: Props)=> {
         className="flex-1 p-2 rounded bg-gray-800 border border-gray-700 text-white text-sm"
       />
       <button
-        onClick={handleCreate}
-        className="bg-zinc-600 px-3 py-1 rounded hover:bg-zinc-500 text-sm"
-      >
+        onClick={handleCreate} className="bg-zinc-600 px-3 py-1 rounded hover:bg-zinc-500 text-sm" >
         Add
       </button>
     </div>

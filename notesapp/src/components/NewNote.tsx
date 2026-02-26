@@ -1,9 +1,10 @@
 // const API = 'https://nowted-server.remotestate.com/notes';
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoMdAdd } from "react-icons/io";
 import { createNote } from '../Api/PostApi';
+// import Middle from './Mid';
 
 interface AddNoteProps {
   folderId: string | null;   
@@ -63,6 +64,10 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
     setError('');
   };
 
+  // useEffect(()=>{
+  //   Middle();
+  // },[])
+  
   return (
     <>
       <button 
