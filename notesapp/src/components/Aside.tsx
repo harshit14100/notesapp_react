@@ -13,6 +13,7 @@ import Folders from './Folders';
 import NewFolder from "./NewFolder";
 import { getFolders } from "../Api/API";
 import '../App.css'
+import { GoSun, GoMoon } from "react-icons/go"; 
 
 interface AsideProps {
   onSelectFolder: (id: string, name: string) => void;
@@ -20,55 +21,82 @@ interface AsideProps {
   selectedFolderName: string | null;
 }
 
-
+interface Folder {
+  id: string;
+  name: string;
+}
 
 const Aside: React.FC<AsideProps> = ({
   onSelectFolder,
   selectedFolderId,
   selectedFolderName
 }) => {
-   const [folders, setFolders] = useState<any[]>([]);
+   const [folders, setFolders] = useState<Folder[]>([]);
+   const [isDarkMode, setIsDarkMode] = useState(true);
 
    const fetchFolders = async () => {
+  try {
     const data = await getFolders();
     setFolders(data || []);
-  };
+  } catch (error) {
+    console.error("Error fetching folders:", error);
+  }
+};
     
     useEffect(() => {
     fetchFolders();
+    document.documentElement.classList.add('dark');
   }, []);
 
-  const handleFolderCreated = async (newFolder: any) => {
-    setFolders((prev) => [...prev, newFolder]);
-    onSelectFolder(newFolder.id,newFolder.name); 
-    await fetchFolders();
+  const handleFolderCreated = (newFolder: Folder) => {
+  setFolders((prev) => [...prev, newFolder]);
+  onSelectFolder(newFolder.id, newFolder.name);
+};
+
+  
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    if (isDarkMode) {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
   };
+
   return (
     <>
-
-    <div className='bg-[#181818] min-w-1/5 h-screen text-white  font-sans flex flex-col justify-between overflow-hidden'>
+  
+    <div className='bg-bg-aside min-w-1/5 h-screen text-text-main font-sans flex flex-col justify-between overflow-hidden border-r border-border-dark'>
         <div>
       <div className='flex justify-between '>
 
         <img src={noteslogo} className="px-5 pt-[7%]" />
-        <button className='px-5 rounded-4xl pt-[7%] cursor-pointer text-zinc-400 text-2xl'>
+        <div className='px-5 pt-[7%] flex items-center gap-4 text-text-main text-2xl'>
+        <button onClick={toggleTheme} className="cursor-pointer">
+          {isDarkMode ? <GoSun /> : <GoMoon />} 
+        </button>
+        
+        <button className='rounded-4xl cursor-pointer text-text-main text-2xl'>
         <IoSearch />
         </button>
+        </div>
       </div>
       <div className='py-8 relative pl-8 font-bold '>
-      <button className='px-6 py-3 rounded w-[90%] bg-zinc-600 hover:bg-zinc-700 gap-2 '>
+      
+      <button className='px-6 py-3 rounded w-[90%] bg-button hover:bg-button-hover gap-2 '>
         <AddNote folderId={selectedFolderId} />
         
         
          </button>
       </div>
       <div>
-      <h4 className='text-zinc-300 px-8 text-sm font-bold pt-5 '>Recents</h4>
+      
+      <h4 className='text-text-dim px-8 text-sm font-bold pt-5 '>Recents</h4>
       <Recentnotes />
       </div>
       <div className="flex flex-col flex-1 overflow-hidden h-87">
   <div className="flex justify-between items-center ">
-    <h4 className="text-zinc-300 px-8 text-sm font-bold pt-1">
+    <h4 className="text-text-dim px-8 text-sm font-bold pt-1">
       Folders
     </h4>
     <div className="px-6">
@@ -97,14 +125,16 @@ const Aside: React.FC<AsideProps> = ({
           <div>
 
       <div className='pb-20'>
-        <h4 className='text-zinc-300 px-8 text-sm font-bold  pt-5'>More</h4>
-        <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  text-zinc-300 py-2.5 hover:bg-primary-hover hover:text-amber-50'>
+        <h4 className='text-text-dim px-8 text-sm font-bold  pt-5'>More</h4>
+        
+        <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer text-text-muted py-2.5 hover:bg-primary-hover hover:text-text-main'>
         <TbStar /> <button className='text-sm font-bold '>Favorites</button>
       </div>
-      <div className='flex px-6 gap-3.5 text-2xl text-zinc-300 cursor-pointer items-center  py-2.5 hover:bg-primary-hover hover:text-amber-50 '>
+
+      <div className='flex px-6 gap-3.5 text-2xl text-text-muted cursor-pointer items-center py-2.5 hover:bg-primary-hover hover:text-text-delete '>
         <RiDeleteBin7Line /> <button className='text-sm font-bold   '>Trash</button>
       </div>
-      <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer  py-2.5 text-zinc-300 hover:bg-primary-hover hover:text-amber-50'>
+      <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer py-2.5 text-text-muted hover:bg-primary-hover hover:text-text-main'>
         <FiArchive /> <button className='text-sm font-bold '>Archived Notes</button>
       </div>
           </div>
@@ -115,5 +145,3 @@ const Aside: React.FC<AsideProps> = ({
 }
 
 export default Aside
-
-
