@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Mapping Tailwind colors to our dynamic CSS variables */
   --color-bg-aside: var(--bg-aside);
   --color-bg-main: var(--bg-main);
   --color-bg-right: var(--bg-right);
@@ -20,6 +19,7 @@
   
   --color-border-dark: var(--border-color);
   --color-border-input: var(--border-input);
+--shadow-red-glow: 0 15px 30px 5px rgba(159, 7, 18, 0.4), 0 5px 15px -5px rgba(159, 7, 18, 0.4);
 }
 
 
@@ -30,8 +30,9 @@
   --bg-popover: #ffffff;
   
   --primary-text: rgba(0, 0, 0, 0.6);
-  --primary-hover: #fee2e2;    /* Soft red tint */
-  
+  --primary-hover: #fee2e2;    /* Soft red */
+  --primary-hover-aside: #9b2c2c;;
+
   --button-bg: #e4e4e7;       /* zinc-200 */
   --button-hover: #d4d4d8;    /* zinc-300 */
 

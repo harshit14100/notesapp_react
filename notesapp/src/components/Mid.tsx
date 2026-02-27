@@ -128,8 +128,7 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
               key={note.id}
               onClick={() => handleNoteClick(note.id)}
 
-              className="w-full p-5 bg-bg-aside border border-border-dark hover:bg-primary-hover/10 rounded-lg cursor-pointer transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg"
-            >
+              className="w-full p-5 bg-bg-aside border border-border-dark hover:bg-primary-hover/20 rounded-lg cursor-pointer transition-all duration-300  hover:-translate-y-2 hover:shadow-red-glow" >
               <div className="flex justify-between">
                 <h4 className="text-m font-medium text-text-main mb-2 truncate">
                   {note.title}

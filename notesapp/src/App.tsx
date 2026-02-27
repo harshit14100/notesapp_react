@@ -22,6 +22,9 @@ function App() {
       element:<Home/>
     },
     {
+      path:"/:folderId/:noteId",
+    },
+    {
        path:"*",
         element:""
      } ]

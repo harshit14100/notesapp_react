@@ -72,24 +72,24 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
     <>
       <button 
         onClick={() => setIsFormOpen(true)}
-        className="w-full rounded bg-zinc-600 hover:bg-zinc-700 flex justify-center items-center gap-2 cursor-pointer"
+        className="w-full rounded bg-button hover:bg-button-hover flex justify-center items-center  cursor-pointer transition-all py-3"
       >
-        <div className='text-2xl'>
+        <div className='text-2xl text-text-main'>
           <IoMdAdd />
         </div>
-        <h3 className='font-bold'>New Note</h3>
+        <h3 className='font-bold text-text-main'>New Note</h3>
       </button>
 
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
           
-          <div className="w-full max-w-md p-6 border rounded-lg shadow-2xl bg-[#181818] border-zinc-800">
-            <h3 className="mb-4 text-xl font-bold text-zinc-100">
+          <div className="w-full max-w-md p-6 border rounded-lg shadow-2xl bg-bg-popover border-border-dark">
+            <h3 className="mb-4 text-xl font-bold text-text-main">
               Create a New Note
             </h3>
             
             {error && (
-              <p className="mb-4 text-sm text-red-500">{error}</p>
+              <p className="mb-4 text-sm text-text-delete font-semibold">{error}</p>
             )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -100,7 +100,7 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter note title..."
                 disabled={isSubmitting}
-                className="w-full px-3 py-2 text-white bg-transparent border rounded-md border-zinc-700 focus:outline-none"
+                className="w-full px-3 py-2 text-text-main bg-transparent border rounded-md border-border-input focus:outline-none focus:border-primary-hover transition-colors"
               />
 
               <textarea
@@ -109,14 +109,14 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
                 placeholder="Write your note..."
                 rows={4}
                 disabled={isSubmitting}
-                className="w-full px-3 py-2 text-white bg-transparent border rounded-md resize-none border-zinc-700 focus:outline-none"
+                className="w-full px-3 py-2 text-text-main bg-transparent border rounded-md resize-none border-border-input focus:outline-none focus:border-primary-hover transition-colors"
               />
 
               <div className="flex gap-3 mt-4">
                 <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 font-bold text-white bg-zinc-600 rounded-md hover:bg-zinc-700"
+                  className="px-4 py-2 font-bold text-text-main bg-button rounded-md hover:bg-button-hover transition-all hover:shadow-red-glow disabled:opacity-50"
                 >
                   {isSubmitting ? 'Saving...' : 'Save Note'}
                 </button>
@@ -125,7 +125,7 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
                   type="button"
                   onClick={handleCancel}
                   disabled={isSubmitting}
-                  className="px-4 py-2 border rounded-md text-zinc-300 border-zinc-700 hover:bg-zinc-800"
+                  className="px-4 py-2 border rounded-md text-text-muted border-border-input hover:bg-primary-hover/10 transition-colors"
                 >
                   Cancel
                 </button>

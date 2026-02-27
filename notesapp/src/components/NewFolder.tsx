@@ -31,10 +31,13 @@ const NewFolder= ({ onFolderCreated }: Props)=> {
         placeholder="New folder..."
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="flex-1 p-2 rounded bg-gray-800 border border-gray-700 text-white text-sm"
+        
+        className="flex-1 p-2 rounded bg-transparent border border-border-input text-text-main text-sm focus:outline-none focus:border-primary-hover transition-colors"
       />
       <button
-        onClick={handleCreate} className="bg-zinc-600 px-3 py-1 rounded hover:bg-zinc-500 text-sm" >
+        onClick={handleCreate} 
+        className="bg-button px-3 py-1 rounded hover:bg-button-hover text-text-main text-sm transition-all hover:shadow-lg hover:shadow-primary-hover/40 active:scale-95 cursor-pointer" 
+      >
         Add
       </button>
     </div>

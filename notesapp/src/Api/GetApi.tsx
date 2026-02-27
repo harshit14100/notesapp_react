@@ -19,3 +19,8 @@ export const getNoteById = async (id: string) => {
   const res = await api.get(`/notes/${id}`);
   return res.data.note;
 };
+
+export const searchbar = async (query: string) => {
+  const res = await api.get("/notes", { params: { s: query } });
+  return res.data.notes; 
+};

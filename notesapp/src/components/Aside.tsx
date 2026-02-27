@@ -14,11 +14,15 @@ import NewFolder from "./NewFolder";
 import { getFolders } from "../Api/API";
 import '../App.css'
 import { GoSun, GoMoon } from "react-icons/go"; 
+import { searchbar } from '../Api/GetApi';
+
 
 interface AsideProps {
   onSelectFolder: (id: string, name: string) => void;
   selectedFolderId: string | null;
   selectedFolderName: string | null;
+  setSearchQuery: (query: string) => void; 
+  searchQuery: string; 
 }
 
 interface Folder {
@@ -29,10 +33,14 @@ interface Folder {
 const Aside: React.FC<AsideProps> = ({
   onSelectFolder,
   selectedFolderId,
-  selectedFolderName
+  selectedFolderName,
+  setSearchQuery,
+  searchQuery = "" 
 }) => {
    const [folders, setFolders] = useState<Folder[]>([]);
    const [isDarkMode, setIsDarkMode] = useState(true);
+   const [searchResults, setSearchResults] = useState([]);
+   const [showSearch, setShowSearch] = useState(false);
 
    const fetchFolders = async () => {
   try {
@@ -42,17 +50,54 @@ const Aside: React.FC<AsideProps> = ({
     console.error("Error fetching folders:", error);
   }
 };
+
+
+useEffect(() => {
+  const delay = setTimeout(async () => {
+    if (searchQuery.trim().length > 0) {
+      try {
+        const data = await searchbar(searchQuery);
+        setSearchResults(data?.data || data || []);
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      setSearchResults([]);
+    }
+  }, 400);
+
+  return () => clearTimeout(delay);
+}, [searchQuery]);
+
+    useEffect(() => {
+      const fetchSearch = async () => {
+        console.log(searchQuery);
+
+    if (searchQuery?.length > 0) {
+      const data = await searchbar(searchQuery);
+      setSearchResults(data);
+    } else {
+      setSearchResults([]);
+    }
+  };
+  fetchSearch();
+}, [searchQuery]);
     
     useEffect(() => {
+
     fetchFolders();
     document.documentElement.classList.add('dark');
   }, []);
+
+  const handleSearch = () => {
+  setShowSearch(prev => !prev);
+};
 
   const handleFolderCreated = (newFolder: Folder) => {
   setFolders((prev) => [...prev, newFolder]);
   onSelectFolder(newFolder.id, newFolder.name);
 };
-
+ 
   
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -70,30 +115,43 @@ const Aside: React.FC<AsideProps> = ({
         <div>
       <div className='flex justify-between '>
 
-        <img src={noteslogo} className="px-5 pt-[7%]" />
+        <img src={noteslogo} className="px-5 pt-[7%] text-black dark:invert-0 invert-100" />
         <div className='px-5 pt-[7%] flex items-center gap-4 text-text-main text-2xl'>
         <button onClick={toggleTheme} className="cursor-pointer">
           {isDarkMode ? <GoSun /> : <GoMoon />} 
         </button>
         
-        <button className='rounded-4xl cursor-pointer text-text-main text-2xl'>
-        <IoSearch />
+        <button onClick={handleSearch} className='text-2xl'>
+          <IoSearch />
         </button>
+
+        {showSearch && (
+          <div className="absolute top-16 left-10 z-50">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Write note name..."
+              className='flex-1 p-2 w-180 rounded bg-text-dim border border-border-input text-bg-main text-sm focus:outline-none focus:border-primary-hover transition-colors '/> 
+          </div>
+        )}
         </div>
       </div>
       <div className='py-8 relative pl-8 font-bold '>
       
-      <button className='px-6 py-3 rounded w-[90%] bg-button hover:bg-button-hover gap-2 '>
+      <div className='rounded w-[90%] gap-2 '>
         <AddNote folderId={selectedFolderId} />
         
         
-         </button>
+         </div>
       </div>
       <div>
       
-      <h4 className='text-text-dim px-8 text-sm font-bold pt-5 '>Recents</h4>
-      <Recentnotes />
-      </div>
+      <h4 className='text-text-dim px-8 text-sm font-bold pt-5 '>
+  {searchQuery?.length > 0 ? "Search Results" : "Recents"}
+</h4>
+      <Recentnotes searchResults={searchResults} searchQuery={searchQuery} />
+    </div>
       <div className="flex flex-col flex-1 overflow-hidden h-87">
   <div className="flex justify-between items-center ">
     <h4 className="text-text-dim px-8 text-sm font-bold pt-1">
@@ -127,14 +185,14 @@ const Aside: React.FC<AsideProps> = ({
       <div className='pb-20'>
         <h4 className='text-text-dim px-8 text-sm font-bold  pt-5'>More</h4>
         
-        <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer text-text-muted py-2.5 hover:bg-primary-hover hover:text-text-main'>
+        <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer text-text-muted py-2.5 hover:bg-red-800 hover:text-text-main'>
         <TbStar /> <button className='text-sm font-bold '>Favorites</button>
       </div>
 
-      <div className='flex px-6 gap-3.5 text-2xl text-text-muted cursor-pointer items-center py-2.5 hover:bg-primary-hover hover:text-text-delete '>
+      <div className='flex px-6 gap-3.5 text-2xl text-text-muted cursor-pointer items-center py-2.5 hover:bg-red-800 hover:text-text-delete '>
         <RiDeleteBin7Line /> <button className='text-sm font-bold   '>Trash</button>
       </div>
-      <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer py-2.5 text-text-muted hover:bg-primary-hover hover:text-text-main'>
+      <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer py-2.5 text-text-muted hover:bg-red-800 hover:text-text-main'>
         <FiArchive /> <button className='text-sm font-bold '>Archived Notes</button>
       </div>
           </div>
