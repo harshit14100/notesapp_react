@@ -15,6 +15,7 @@ import { getFolders } from "../Api/API";
 import '../App.css'
 import { GoSun, GoMoon } from "react-icons/go"; 
 import { searchbar } from '../Api/GetApi';
+import { NavLink } from 'react-router-dom';
 
 
 interface AsideProps {
@@ -126,7 +127,7 @@ useEffect(() => {
         </button>
 
         {showSearch && (
-          <div className="absolute top-16 left-10 z-50">
+          <div className="absolute top-5 left-150 z-50">
             <input
               type="text"
               value={searchQuery}
@@ -185,16 +186,23 @@ useEffect(() => {
       <div className='pb-20'>
         <h4 className='text-text-dim px-8 text-sm font-bold  pt-5'>More</h4>
         
-        <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer text-text-muted py-2.5 hover:bg-red-800 hover:text-text-main'>
-        <TbStar /> <button className='text-sm font-bold '>Favorites</button>
-      </div>
+        <NavLink
+        to={'/favorites'}
+         className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer text-text-muted py-2.5 hover:bg-red-800 hover:text-white'>
+        <TbStar /> <span className='text-sm font-bold '>Favorites</span>
+      </NavLink>
 
-      <div className='flex px-6 gap-3.5 text-2xl text-text-muted cursor-pointer items-center py-2.5 hover:bg-red-800 hover:text-text-delete '>
-        <RiDeleteBin7Line /> <button className='text-sm font-bold   '>Trash</button>
-      </div>
-      <div className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer py-2.5 text-text-muted hover:bg-red-800 hover:text-text-main'>
-        <FiArchive /> <button className='text-sm font-bold '>Archived Notes</button>
-      </div>
+      <NavLink
+      to={'/delete'}
+       className='flex px-6 gap-3.5 text-2xl text-text-muted cursor-pointer items-center py-2.5 hover:bg-red-800 hover:text-white '>
+        <RiDeleteBin7Line /> <span className='text-sm font-bold   '>Trash</span>
+      </NavLink>
+
+      <NavLink
+      to={'/archive'}
+       className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer py-2.5 text-text-muted hover:bg-red-800 hover:text-white'>
+        <FiArchive /> <span className='text-sm font-bold '>Archived Notes</span>
+      </NavLink>
           </div>
       </div>
     </div>

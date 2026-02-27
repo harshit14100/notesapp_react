@@ -27,16 +27,23 @@ import { DeleteNote } from "../Api/Delete";
   
   
     const handleDelete = async (e: React.MouseEvent) => {
-       e.stopPropagation();
+  e.stopPropagation();
 
   if (!noteId) return;
 
   try {
+    const folderId = note?.folder?._id;
+
     await DeleteNote(noteId);
 
     setnote(null);
 
-    navigate(`/folder/${note.folder._id}`);
+    if (folderId) {
+      navigate(`/folder/${folderId}`);
+    } else {
+      navigate(`/recent`);
+    }
+
   } catch (err) {
     console.error("Delete failed:", err);
   }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getRecentNotes, getNotesByFolder } from "../Api/GetApi";
+import { getRecentNotes, getNotesByFolder, getDeletedNotes, getFavoriteNotes, getArchiveNotes } from "../Api/GetApi";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { DeleteNote } from "../Api/Delete";
 import { useNavigate, useParams  } from "react-router-dom";
@@ -8,8 +8,9 @@ import { useNavigate, useParams  } from "react-router-dom";
 // import { createNote } from '../Api/PostApi';
 
 export type MiddleProps = {
-  selectedfolderId: string | null;
-  selectedFoldername: string | null;
+  selectedfolderId?: string | null;
+  selectedFoldername?: string | null;
+  type?:string 
 }
 
 interface Note {
@@ -19,10 +20,32 @@ interface Note {
   createdAt: string;
 }
 
-function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
+function Middle({ selectedfolderId, selectedFoldername, type }: MiddleProps) {
   const [notes, setNotes] = useState<Note[]>([]);
   const { folderId, noteId } = useParams();
   const navigate = useNavigate();
+
+  const renderNotes = async () => {
+    if (type === "trash") {
+      const res = await getDeletedNotes();
+      setNotes(res);
+      return;
+    }
+    if (type === "favorite") {
+      const res = await getFavoriteNotes();
+      setNotes(res);
+      return;
+    }
+    if (type === "archive") {
+      const res = await getArchiveNotes();
+      setNotes(res);
+      return;
+    }
+    if (!folderId) return;
+    const res = await getNotesByFolder(folderId);
+    setNotes(res);
+  };
+
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,6 +56,26 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
     setError("");
 
     let data;
+
+      if (type === "trash") {
+        data = await getDeletedNotes();
+      }
+      else if (type === "favorite") {
+        data = await getFavoriteNotes();
+      }
+      else if (type === "archive") {
+        data = await getArchiveNotes();
+      }
+      else if (!selectedfolderId && !folderId) {
+        data = await getRecentNotes();
+      }
+      else if (folderId === "recent") {
+        data = await getRecentNotes();
+      } 
+      else {
+        const activeFolder = selectedfolderId || folderId;
+        data = await getNotesByFolder(activeFolder!);
+      }
 
     if (!selectedfolderId && !folderId) {
       data = await getRecentNotes();
@@ -62,6 +105,13 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
     fetchNotes();
   }, [selectedfolderId, folderId]);
 
+  useEffect(() => {
+
+  if (!folderId && !type) {
+    setNotes([]);
+  }
+}, [folderId, type]);
+
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation(); 
     try {
@@ -87,7 +137,13 @@ function Middle({ selectedfolderId, selectedFoldername }: MiddleProps) {
       <div className="w-full p-[3%] pb-[4%]">
       <div className="flex justify-between items-center mb-5">
         <h2 className="text-xl font-semibold text-text-main">
-            {selectedFoldername || "Recents"}
+            {type === "trash"
+          ? "Trash"
+          : type === "favorite"
+          ? "Favorite"
+          : type === "archive"
+          ? "Archive"
+          : selectedFoldername || "Recents"}
          </h2>
 
           {!isLoading && (

@@ -14,16 +14,21 @@ function App() {
       element:<Home/>,  
       children:[
          {
-      path:"/:folderId", 
-      element:<Home/>
-    },
-    {
-      path:"/:folderId/:noteId", 
-      element:<Home/>
-    },
-    {
-      path:"/:folderId/:noteId",
-    },
+        path:"/folder/:folderId",
+        element:<Home/>
+      },
+      {
+        path:"/notes/:folderId/:noteId",
+        element:<Home/>
+      },
+      {
+        path:"/type/:type",
+        element:<Home />
+      },
+      {
+        path:"/type/:type/:noteId",
+        element:<Home />
+      },
     {
        path:"*",
         element:""
