@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getRecentNotes, getNotesByFolder, getDeletedNotes, getFavoriteNotes, getArchiveNotes } from "../Api/GetApi";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { DeleteNote } from "../Api/Delete";
+import { IoSearch, IoClose } from "react-icons/io5";
 import { useNavigate, useParams  } from "react-router-dom";
 // import AddNote from "./NewNote";
 // import { IoMdAdd } from "react-icons/io";
@@ -11,6 +12,7 @@ export type MiddleProps = {
   selectedfolderId?: string | null;
   selectedFoldername?: string | null;
   type?:string 
+  refetchKey?: number;
 }
 
 interface Note {
@@ -20,31 +22,15 @@ interface Note {
   createdAt: string;
 }
 
-function Middle({ selectedfolderId, selectedFoldername, type }: MiddleProps) {
+function Middle({ selectedfolderId, selectedFoldername, type, refetchKey }: MiddleProps) {
   const [notes, setNotes] = useState<Note[]>([]);
-  const { folderId, noteId } = useParams();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Note[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const { folderId, noteId, type: routeType } = useParams();
   const navigate = useNavigate();
 
-  const renderNotes = async () => {
-    if (type === "trash") {
-      const res = await getDeletedNotes();
-      setNotes(res);
-      return;
-    }
-    if (type === "favorite") {
-      const res = await getFavoriteNotes();
-      setNotes(res);
-      return;
-    }
-    if (type === "archive") {
-      const res = await getArchiveNotes();
-      setNotes(res);
-      return;
-    }
-    if (!folderId) return;
-    const res = await getNotesByFolder(folderId);
-    setNotes(res);
-  };
+  
 
 
   const [isLoading, setIsLoading] = useState(true);
@@ -57,30 +43,16 @@ function Middle({ selectedfolderId, selectedFoldername, type }: MiddleProps) {
 
     let data;
 
-      if (type === "trash") {
-        data = await getDeletedNotes();
-      }
-      else if (type === "favorite") {
-        data = await getFavoriteNotes();
-      }
-      else if (type === "archive") {
-        data = await getArchiveNotes();
-      }
-      else if (!selectedfolderId && !folderId) {
-        data = await getRecentNotes();
-      }
-      else if (folderId === "recent") {
-        data = await getRecentNotes();
-      } 
-      else {
-        const activeFolder = selectedfolderId || folderId;
-        data = await getNotesByFolder(activeFolder!);
-      }
-
-    if (!selectedfolderId && !folderId) {
-      data = await getRecentNotes();
-    }
-    else if (folderId === "recent") {
+    if (routeType === "trash") {
+      data = await getDeletedNotes();
+    } 
+    else if (routeType === "favorite") {
+      data = await getFavoriteNotes();
+    } 
+    else if (routeType === "archive") {
+      data = await getArchiveNotes();
+    } 
+    else if (!folderId && !routeType){
       data = await getRecentNotes();
     } 
     else {
@@ -88,69 +60,87 @@ function Middle({ selectedfolderId, selectedFoldername, type }: MiddleProps) {
       data = await getNotesByFolder(activeFolder!);
     }
 
-    // console.log(data);
-    
-    setNotes(data || []);
-  }
-  catch (err) {
-    console.error(err);
-    setError("Failed to load notes.");
-  } 
-  finally {
-    setIsLoading(false);
-  }
-};
-
-  useEffect(() => {
-    fetchNotes();
-  }, [selectedfolderId, folderId]);
-
-  useEffect(() => {
-
-  if (!folderId && !type) {
-    setNotes([]);
-  }
-}, [folderId, type]);
-
-  const handleDelete = async (e: React.MouseEvent, id: string) => {
-    e.stopPropagation(); 
-    try {
-      await DeleteNote(id);
-      fetchNotes(); 
-      if (noteId === id) navigate(`/${folderId || 'recent'}`); 
+    setNotes((data || []).filter((note: any) => routeType === "trash" || !note.deleted));
     } catch (err) {
       console.error(err);
+      setError("Failed to load notes.");
+    } finally {
+      setIsLoading(false);
+  }
+};
+  useEffect(() => {
+    fetchNotes();
+    setSearchQuery("");
+    setSearchResults([]);
+  }, [selectedfolderId, folderId, routeType, refetchKey]);
+
+
+  useEffect(() => {
+    if (searchQuery.trim().length === 0) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const delay = setTimeout(async () => {
+      try {
+        const data = await searchbar(searchQuery);
+        setSearchResults(data || []);
+      } catch (err) {
+        console.error("Search failed:", err);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(delay);
+  }, [searchQuery]);
+
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+
+    const success = await DeleteNote(id);
+
+    if (success) {
+      setNotes(prev => prev.filter(note => note.id !== id));
+      setSearchResults(prev => prev.filter(note => note.id !== id));
     }
   };
   // console.log(selectedFoldername);
   
   const handleNoteClick = (id: string) => {
     const activeFolder = selectedfolderId || folderId || "recent";
-    navigate(`/${activeFolder}/${id}`); 
+    navigate(`/notes/${activeFolder}/${id}`);
   };
 
+  console.log("TYPE:", routeType);
+console.log("FOLDER:", folderId);
   const skeletonArray = [1, 2, 3];
 
+  const displayNotes = searchQuery.trim().length > 0 ? searchResults : notes;
+
+  const sectionTitle = routeType === "trash"
+    ? "Trash"
+    : routeType === "favorite"
+    ? "Favorite"
+    : routeType === "archive"
+    ? "Archive"
+    : selectedFoldername || "Recents";
   return (
 
     <div className="h-full bg-bg-main flex flex-col transition-colors duration-200">
       <div className="w-full p-[3%] pb-[4%]">
-      <div className="flex justify-between items-center mb-5">
+        <div className="flex justify-between items-center mb-5">
         <h2 className="text-xl font-semibold text-text-main">
-            {type === "trash"
-          ? "Trash"
-          : type === "favorite"
-          ? "Favorite"
-          : type === "archive"
-          ? "Archive"
-          : selectedFoldername || "Recents"}
-         </h2>
+          {sectionTitle}
+        </h2>
 
           {!isLoading && (
-            <p className="text-text-muted text-sm">{notes.length} Notes</p>
+            <p className="text-text-muted text-sm">{displayNotes.length} Notes</p>
           )}
-
-      </div>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3.75 pb-7.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">

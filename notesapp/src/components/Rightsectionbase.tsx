@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getNoteById } from "../Api/GetApi";
 import {  useNavigate, useParams } from "react-router-dom";
 import { TbFileText, TbStar } from "react-icons/tb";
+import api from "../Api/API";
 
 
 import { PiDotsThreeCircle } from "react-icons/pi";
@@ -15,39 +16,65 @@ import { DeleteNote } from "../Api/Delete";
   
   
   
-  const RightSide = () => {
-    const [overlay, setoverlay] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false); 
+  const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
+  const [overlay, setoverlay] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const {  noteId } = useParams();
-    const navigate = useNavigate();
+  const { noteId } = useParams();
+  const navigate = useNavigate();
   const [note, setnote] = useState<any>(null);
 
-  // console.log(params );
-  
-  
-    const handleDelete = async (e: React.MouseEvent) => {
-  e.stopPropagation();
+  // console.log(params);
 
-  if (!noteId) return;
-
-  try {
-    const folderId = note?.folder?._id;
-
-    await DeleteNote(noteId);
-
-    setnote(null);
-
-    if (folderId) {
-      navigate(`/folder/${folderId}`);
-    } else {
-      navigate(`/recent`);
+  const handleFavorite = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!noteId) return;
+    try {
+      const updated = await api.patch(`/notes/${noteId}`, { favorite: !note?.favorite });
+      setnote(updated.data.note);
+      setoverlay(false);
+      onNoteChanged?.();
+    } catch (err) {
+      console.error("Favorite failed:", err);
     }
+  };
 
-  } catch (err) {
-    console.error("Delete failed:", err);
-  }
-};
+  const handleArchive = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!noteId) return;
+    try {
+      const updated = await api.patch(`/notes/${noteId}`, { archived: !note?.archived });
+      setnote(updated.data.note);
+      setoverlay(false);
+      onNoteChanged?.();
+    } catch (err) {
+      console.error("Archive failed:", err);
+    }
+  };
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!noteId) return;
+
+    try {
+      const folderId = note?.folder?.id;
+
+      await DeleteNote(noteId);
+
+      setnote(null);
+      onNoteChanged?.();
+
+      if (folderId) {
+        navigate(`/folder/${folderId}`);
+      } else {
+        navigate(`/`);
+      }
+
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  };
 
 
   useEffect(() => {
@@ -107,14 +134,16 @@ import { DeleteNote } from "../Api/Delete";
           {overlay && (
          <div className="absolute top-12 right-0 rounded p-4 w-60 text-md flex flex-col gap-4 bg-bg-popover text-text-main shadow-xl border border-border-dark">
 
-            <button className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2">
+            <button className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
+              onClick={handleFavorite}>
               <TbStar />
-              {"Add to Favorites"}
+              {note?.favorite ? "Remove from Favorites" : "Add to Favorites"}
             </button>
 
-            <button className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2">
+            <button className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
+              onClick={handleArchive}>
               <FiArchive />
-              {"Archived"}
+              {note?.archived ? "Unarchive" : "Archived"}
             </button>
 
             <hr className="w-full border-t border-border-dark"></hr>

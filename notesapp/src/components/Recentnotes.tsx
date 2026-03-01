@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 // import Card from './Card'
 import type { NotesType } from '../types/types'
 import { TbFileText } from "react-icons/tb";
-
+import { useNavigate } from 'react-router-dom';
 
 interface RecentnotesProps {
   searchResults?: NotesType[];
@@ -17,6 +17,7 @@ const Recentnotes: React.FC<RecentnotesProps> = ({ searchResults, searchQuery })
   const [rec, setRec] = useState<NotesType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const navigate = useNavigate();
   
   
   const getnotes = async () => {
