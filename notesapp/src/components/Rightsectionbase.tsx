@@ -34,12 +34,12 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
     setOverlay(false);
 
     try {
-      // console.log("PATCH favorite →", noteId, { favorite: newFavoriteValue });
+      // console.log(, noteId, { favorite: newFavoriteValue });
       const res = await api.patch(`/notes/${noteId}`, { favorite: newFavoriteValue });
-      // console.log("PATCH favorite response →", res.status, res.data);
+      // console.log( res.status, res.data);
       onNoteChanged?.();
     } catch (err: any) {
-      // console.error("Favorite PATCH failed:", err?.response?.status, err?.response?.data || err);
+      // console.error(err?.response?.status, err?.response?.data || err);
       setNote((prev: any) => ({ ...prev, favorite: !newFavoriteValue }));
     }
   };
@@ -53,9 +53,9 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
     setOverlay(false);
 
     try {
-      console.log("PATCH archive →", noteId, { archived: newArchivedValue });
+      // console.log(noteId, { archived: newArchivedValue });
       const res = await api.patch(`/notes/${noteId}`, { archived: newArchivedValue });
-      console.log("PATCH archive response →", res.status, res.data);
+      // console.log( res.status, res.data);
       setNote(null);
       onNoteChanged?.();
       if (folderId) {
@@ -64,7 +64,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
         navigate(`/`);
       }
     } catch (err: any) {
-      console.error("Archive PATCH failed:", err?.response?.status, err?.response?.data || err);
+      // console.error(err?.response?.status, err?.response?.data || err);
     }
   };
 
@@ -82,7 +82,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
         navigate(`/`);
       }
     } catch (err) {
-      console.error("Delete failed:", err);
+      // console.error( err);
     }
   };
 
@@ -98,7 +98,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
         navigate(`/`);
       }
     } catch (err) {
-      console.error("Restore failed:", err);
+      // console.error(err);
     } finally {
       setIsRestoring(false);
     }
@@ -118,7 +118,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
       }
       onNoteChanged?.();
     } catch (err) {
-      console.error("Save failed:", err);
+      // console.error( err);
     } finally {
       setIsSaving(false);
     }
@@ -143,7 +143,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
         setEditTitle(res.title || "");
         setEditContent(res.content || "");
       } catch (err) {
-        console.error("Error loading note:", err);
+        // console.error( err);
       } finally {
         setIsLoading(false);
       }
