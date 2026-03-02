@@ -56,7 +56,7 @@ const Recentnotes: React.FC<RecentnotesProps> = ({ searchResults, searchQuery })
           
           <div
             onClick={() => navigate(`/notes/recent/${elem.id}`)}
-            className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer py-2.5 text-text-dim hover:bg-red-800 hover:text-primary-hover transition-colors rounded mx-2'>
+            className='flex px-6 gap-3.5 text-2xl items-center cursor-pointer py-2.5 text-text-dim hover:bg-red-800 hover:text-white transition-colors rounded mx-2'>
             <TbFileText /> 
             <button className='text-sm font-bold truncate cursor-pointer'>
               {elem.title}

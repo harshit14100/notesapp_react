@@ -111,14 +111,14 @@ const Aside: React.FC<AsideProps> = ({
           </div>
 
           {showSearch && (
-            <div className="px-5 pt-3">
+            <div className="px-5 pt-3 absolute top-1.5 left-130 ">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search notes..."
                 autoFocus
-                className='w-full p-2 rounded bg-bg-popover border border-border-input text-text-main text-sm focus:outline-none focus:border-primary-hover transition-colors'
+                className='w-70 p-2 rounded bg-bg-popover border border-border-input text-text-main text-sm focus:outline-none focus:border-primary-hover transition-colors'
               />
             </div>
           )}
@@ -183,8 +183,7 @@ const Aside: React.FC<AsideProps> = ({
             <NavLink
               to={'/type/trash'}
               className={({ isActive }) =>
-                `flex px-6 gap-3.5 text-2xl text-text-muted cursor-pointer items-center py-2.5 hover:bg-red-800 hover:text-white ${isActive ? 'bg-red-800 text-white' : ''}`
-              }>
+                `flex px-6 gap-3.5 text-2xl text-text-muted cursor-pointer items-center py-2.5 hover:bg-red-800 hover:text-white ${isActive ? 'bg-red-800 text-white' : ''}` }>
               <RiDeleteBin7Line /> <span className='text-sm font-bold'>Trash</span>
             </NavLink>
 

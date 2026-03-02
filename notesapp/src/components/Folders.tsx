@@ -24,7 +24,7 @@ const Folders: React.FC<FoldersProps> = ({ folders, onSelectFolder, selectedFold
             className={`flex items-center gap-3.5 px-4 py-2.5 text-2xl cursor-pointer rounded-lg transition-colors ${
               selectedFolderId === folderItem.id
                 ? 'bg-red-800 text-white'
-                : 'text-text-dim hover:bg-red-800 hover:text-bg-popover'
+                : 'text-text-dim hover:bg-red-800 hover:text-white'
             }`}>
             <PiFolderSimpleBold /> 
             <h2 className='text-sm font-bold'>{folderItem.name}</h2> 
