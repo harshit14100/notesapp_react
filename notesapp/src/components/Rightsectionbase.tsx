@@ -3,6 +3,7 @@ import { getNoteById } from "../Api/GetApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { TbFileText, TbStar, TbStarFilled } from "react-icons/tb";
 import { MdOutlineUnarchive } from "react-icons/md";
+import { LuHistory } from "react-icons/lu";
 import api from "../Api/API";
 
 import { PiDotsThreeCircle } from "react-icons/pi";
@@ -10,11 +11,7 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegFolder } from "react-icons/fa";
 import { FiArchive } from "react-icons/fi";
 import { RiDeleteBin7Line } from "react-icons/ri";
-
 import { DeleteNote } from "../Api/Delete";
-
-
-
 
 const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
   const [overlay, setOverlay] = useState<boolean>(false);
@@ -22,40 +19,52 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
   const [editTitle, setEditTitle] = useState<string>("");
   const [editContent, setEditContent] = useState<string>("");
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isRestoring, setIsRestoring] = useState<boolean>(false);
 
-  const { noteId } = useParams();
+  const { noteId, type: routeType } = useParams();
   const navigate = useNavigate();
   const [note, setNote] = useState<any>(null);
 
   const handleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!noteId) return;
+    if (!noteId || !note) return;
+
+    const newFavoriteValue = !note.favorite;
+    setNote((prev: any) => ({ ...prev, favorite: newFavoriteValue }));
+    setOverlay(false);
+
     try {
-      const updated = await api.patch(`/notes/${noteId}`, { favorite: !note?.favorite });
-      setNote(updated.data.note);
-      setOverlay(false);
+      // console.log("PATCH favorite →", noteId, { favorite: newFavoriteValue });
+      const res = await api.patch(`/notes/${noteId}`, { favorite: newFavoriteValue });
+      // console.log("PATCH favorite response →", res.status, res.data);
       onNoteChanged?.();
-    } catch (err) {
-      console.error("Favorite failed:", err);
+    } catch (err: any) {
+      // console.error("Favorite PATCH failed:", err?.response?.status, err?.response?.data || err);
+      setNote((prev: any) => ({ ...prev, favorite: !newFavoriteValue }));
     }
   };
 
   const handleArchive = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!noteId) return;
+    if (!noteId || !note) return;
+
+    const newArchivedValue = !note.archived;
+    const folderId = note?.folder?.id;
+    setOverlay(false);
+
     try {
-      const folderId = note?.folder?.id;
-      await api.patch(`/notes/${noteId}`, { archived: !note?.archived });
+      console.log("PATCH archive →", noteId, { archived: newArchivedValue });
+      const res = await api.patch(`/notes/${noteId}`, { archived: newArchivedValue });
+      console.log("PATCH archive response →", res.status, res.data);
       setNote(null);
-      setOverlay(false);
       onNoteChanged?.();
       if (folderId) {
         navigate(`/folder/${folderId}`);
       } else {
         navigate(`/`);
       }
-    } catch (err) {
-      console.error("Archive failed:", err);
+    } catch (err: any) {
+      console.error("Archive PATCH failed:", err?.response?.status, err?.response?.data || err);
     }
   };
 
@@ -77,6 +86,24 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
     }
   };
 
+  const handleRestore = async () => {
+    try {
+      setIsRestoring(true);
+      await api.patch(`/notes/${noteId}`, { deleted: false });
+      onNoteChanged?.();
+      const folderId = note?.folder?.id;
+      if (folderId) {
+        navigate(`/folder/${folderId}`);
+      } else {
+        navigate(`/`);
+      }
+    } catch (err) {
+      console.error("Restore failed:", err);
+    } finally {
+      setIsRestoring(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!noteId || !note) return;
     if (editTitle === note.title && editContent === note.content) return;
@@ -86,7 +113,9 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
         title: editTitle,
         content: editContent,
       });
-      setNote(updated.data.note);
+      if (updated?.data?.note) {
+        setNote(updated.data.note);
+      }
       onNoteChanged?.();
     } catch (err) {
       console.error("Save failed:", err);
@@ -133,6 +162,33 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
           Choose a note from the list on the left to view its contents, or
           create a <br /> new note to add to your collection.
         </p>
+      </div>
+    );
+  }
+
+  if (note.deleted || routeType === "trash") {
+    return (
+      <div className="w-full h-full bg-bg-right flex flex-col items-center justify-center gap-5 px-10">
+        <div className="text-text-dim">
+          <LuHistory size={80} strokeWidth={1} />
+        </div>
+
+        <h2 className="text-text-main text-2xl font-semibold text-center">
+          Restore "{note.title}"
+        </h2>
+
+        <p className="text-text-muted text-sm text-center max-w-md leading-relaxed ">
+          Don't want to lose this note? It's not too late! Just click the 'Restore'
+          button and it will be added back to your list. It's that simple.
+        </p>
+
+        <button
+          onClick={handleRestore}
+          disabled={isRestoring}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-2.5 rounded-md transition-colors disabled:opacity-60 cursor-pointer"
+        >
+          {isRestoring ? "Restoring..." : "Restore"}
+        </button>
       </div>
     );
   }

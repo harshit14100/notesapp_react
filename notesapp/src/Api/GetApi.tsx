@@ -32,7 +32,9 @@ export const getDeletedNotes = async () => {
     const res = await api.get(`/notes?deleted=true`);
     return res.data.notes;
   } catch (e) {
-    if (e instanceof Error) console.log(e.message);
+    if (e instanceof Error){
+      //  console.log(e.message)
+      };
     return [];
   }
 };
@@ -42,7 +44,9 @@ export const getFavoriteNotes = async () => {
     const res = await api.get(`/notes?favorite=true`);
     return res.data.notes;
   } catch (e) {
-    if (e instanceof Error) console.log(e.message);
+    if (e instanceof Error) {
+      // console.log(e.message)
+    };
     return [];
   }
 };
@@ -52,7 +56,10 @@ export const getArchiveNotes = async () => {
     const res = await api.get(`/notes?archived=true`);
     return res.data.notes;
   } catch (e) {
-    if (e instanceof Error) console.log(e.message);
+    if (e instanceof Error) {
+      // console.log(e.message)
+
+    };
     return [];
   }
 };

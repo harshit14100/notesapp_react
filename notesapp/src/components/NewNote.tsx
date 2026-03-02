@@ -46,10 +46,10 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
 
       onNoteAdded?.(); 
     } catch (err: any) {
-  console.error("error:", err);
+  // console.error("error:", err);
 
   if (err.response) {
-    console.log("error:", err.response.data);
+    // console.log("error:", err.response.data);
   } 
 } finally {
       setIsSubmitting(false);

@@ -9,6 +9,8 @@ import AddNote from './NewNote';
 import Recentnotes from './Recentnotes';
 import Folders from './Folders';
 import NewFolder from "./NewFolder";
+// import Folders from './Folders';
+// import NewFolder from "./NewFolder";
 import { getFolders } from "../Api/GetApi";
 import '../App.css'
 import { GoSun, GoMoon } from "react-icons/go"; 
@@ -43,6 +45,7 @@ const Aside: React.FC<AsideProps> = ({
   isDarkMode,
   toggleTheme,
   onNoteAdded,
+
   searchQuery = "" }) => {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [searchResults, setSearchResults] = useState<NotesType[]>([]);
@@ -54,7 +57,7 @@ const Aside: React.FC<AsideProps> = ({
       const data = await getFolders();
       setFolders(data || []);
     } catch (error) {
-      console.error("couldn't fetch folders:", error);
+      // console.error("couldn't fetch folders:", error);
     }
   };
 
@@ -65,7 +68,7 @@ const Aside: React.FC<AsideProps> = ({
           const data = await searchbar(searchQuery);
           setSearchResults(data?.data || data || []);
         } catch (err) {
-          console.error(err);
+          // console.error(err);
         }
       } else {
         setSearchResults([]);

@@ -25,18 +25,16 @@ const Recentnotes: React.FC<RecentnotesProps> = ({ searchResults, searchQuery })
       setIsLoading(true);
       const response = await axios.get(API);
       const notesData = response.data.recentNotes || response.data;
-
-      console.log((response.data.recentNotes));
       // console.log("getnotes is running");
       
       if (Array.isArray(notesData)) {
         setRec(notesData);
       } else {
         setRec([]);
-        console.error("Expected an array, but received:", notesData);
+        // console.error("Expected an array, but received:", notesData);
       }
     } catch (err) {
-      console.error("Failed to fetch notes:", err);
+      // console.error("Failed to fetch notes:", err);
       setError('Failed to load notes.')
     } finally {
       setIsLoading(false);

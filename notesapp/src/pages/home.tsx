@@ -12,11 +12,11 @@ function Home() {
     const triggerRefetch = () => setRefetchKey(k => k + 1);
     const [isDarkMode, setIsDarkMode] = useState(true);
     const navigate = useNavigate();
-  
+
     useEffect(() => {
       document.documentElement.classList.add('dark');
     }, []);
-  
+
     const toggleTheme = () => {
       if (isDarkMode) {
         document.documentElement.classList.remove('dark');
@@ -38,33 +38,33 @@ function Home() {
       setSelectedFolderName(null);
     };
 
-  return (
-    <div className="flex w-full h-full bg-bg-main overflow-hidden">
-      <div className="w-[20%] h-full border-r border-border-dark">
-        <Aside
-          onSelectFolder={handleSelectFolder}
-          onClearFolder={handleClearFolder}
-          selectedFolderId={selectedFolderId}
-          selectedFolderName={selectedFolderName}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          isDarkMode={isDarkMode}
-          toggleTheme={toggleTheme}
-          onNoteAdded={triggerRefetch}
-        />
+    return (
+      <div className="flex w-full h-full bg-bg-main overflow-hidden">
+        <div className="w-[20%] h-full border-r border-border-dark">
+          <Aside
+            onSelectFolder={handleSelectFolder}
+            onClearFolder={handleClearFolder}
+            selectedFolderId={selectedFolderId}
+            selectedFolderName={selectedFolderName}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            isDarkMode={isDarkMode}
+            toggleTheme={toggleTheme}
+            onNoteAdded={triggerRefetch}
+          />
+        </div>
+        <div className="w-[25%] h-full border-r border-white/5">
+          <Middle
+            selectedfolderId={selectedFolderId}
+            selectedFoldername={selectedFolderName}
+            refetchKey={refetchKey}
+          />
+        </div>
+        <div className="w-[55%] h-full">
+          <RightSide onNoteChanged={triggerRefetch} />
+        </div>
       </div>
-      <div className="w-[25%] h-full border-r border-white/5">
-        <Middle
-          selectedfolderId={selectedFolderId}
-          selectedFoldername={selectedFolderName}
-          refetchKey={refetchKey}
-        />
-      </div>
-      <div className="w-[55%] h-full">
-        <RightSide onNoteChanged={triggerRefetch} />
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Home;

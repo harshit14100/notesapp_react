@@ -19,7 +19,7 @@ const NewFolder= ({ onFolderCreated }: Props)=> {
     onFolderCreated(newFolder);
     setName("");
   } catch (err) {
-    console.error(err);
+    // console.error(err);
   }
 };
 

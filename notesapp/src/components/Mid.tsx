@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { getRecentNotes, getNotesByFolder, getDeletedNotes, getFavoriteNotes, getArchiveNotes, searchbar } from "../Api/GetApi";
 import { RiDeleteBin7Line } from "react-icons/ri";
-import { IoSearch, IoClose } from "react-icons/io5";
 import { DeleteNote } from "../Api/Delete";
 import { useNavigate, useParams } from "react-router-dom";
 // import AddNote from "./NewNote";
@@ -27,7 +26,6 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Note[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [showSearchBar, setShowSearchBar] = useState(false);
   const { folderId, noteId, type: routeType } = useParams();
   const navigate = useNavigate();
 
@@ -53,7 +51,7 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
     else if (routeType === "archive") {
       data = await getArchiveNotes();
     } 
-    else if (!folderId && !routeType){
+    else if (!folderId || folderId === "recent") {
       data = await getRecentNotes();
     } 
     else {
@@ -63,8 +61,8 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
 
     setNotes((data || []).filter((note: any) => routeType === "trash" || !note.deleted));
     } catch (err) {
-      console.error(err);
-      setError("");
+      // console.error(err);
+      setError("Failed to load notes.");
     } finally {
       setIsLoading(false);
   }
@@ -73,7 +71,6 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
     fetchNotes();
     setSearchQuery("");
     setSearchResults([]);
-    setShowSearchBar(false);
   }, [selectedfolderId, folderId, routeType, refetchKey]);
 
 
@@ -91,7 +88,7 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
         const data = await searchbar(searchQuery);
         setSearchResults(data || []);
       } catch (err) {
-        console.error("Search failed:", err);
+        // console.error("Search failed:", err);
         setSearchResults([]);
       } finally {
         setIsSearching(false);
@@ -115,8 +112,12 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
   // console.log(selectedFoldername);
   
   const handleNoteClick = (id: string) => {
-    const activeFolder = selectedfolderId || folderId || "recent";
-    navigate(`/notes/${activeFolder}/${id}`);
+    if (routeType) {
+      navigate(`/type/${routeType}/${id}`);
+    } else {
+      const activeFolder = selectedfolderId || folderId || "recent";
+      navigate(`/notes/${activeFolder}/${id}`);
+    }
   };
 
   const skeletonArray = [1, 2, 3];
@@ -131,38 +132,18 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
     ? "Archive"
     : selectedFoldername || "Recents";
   return (
-    <div className="h-full bg-bg-main flex flex-col transition-colors duration-200">
-      <div className="w-full p-[3%] pb-[2%]">
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-xl font-semibold text-text-main">
-            {sectionTitle}
-          </h2>
-          <div className="flex items-center gap-2">
-            {!isLoading && (
-              <p className="text-text-muted text-sm">{displayNotes.length} Notes</p>
-            )}
-            <button
-              onClick={() => { setSearchQuery(""); setSearchResults([]); setShowSearchBar(prev => !prev); }}
-              className="text-text-muted hover:text-text-main transition-colors p-1 rounded"
-            >
-              {showSearchBar ? <IoClose size={16} /> : <IoSearch size={16} />}
-            </button>
-          </div>
-        </div>
 
-        {showSearchBar && (
-          <div className="relative">
-            <IoSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" size={13} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search notes..."
-              autoFocus
-              className="w-full pl-8 pr-3 py-1.5 text-sm rounded-md bg-bg-aside border border-border-input text-text-main placeholder:text-text-muted focus:outline-none focus:border-primary-hover transition-colors"
-            />
-          </div>
-        )}
+    <div className="h-full bg-bg-main flex flex-col transition-colors duration-200">
+      <div className="w-full p-[3%] pb-[4%]">
+        <div className="flex justify-between items-center mb-5">
+        <h2 className="text-xl font-semibold text-text-main">
+          {sectionTitle}
+        </h2>
+
+          {!isLoading && (
+            <p className="text-text-muted text-sm">{displayNotes.length} Notes</p>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3.75 pb-7.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -174,7 +155,7 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
 
         )}
 
-        {!isLoading && !error && notes.length === 0 && (
+        {!isLoading && !error && displayNotes.length === 0 && (
           <p className="text-text-muted text-center mt-10">No notes found.</p>
         )}
 
@@ -191,7 +172,7 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
             </div>
           ))
         ) : (
-          notes.map((note) => (
+          displayNotes.map((note) => (
             <div
               key={note.id}
               onClick={() => handleNoteClick(note.id)}
