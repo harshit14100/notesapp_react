@@ -98,7 +98,7 @@ const Aside: React.FC<AsideProps> = ({
           <div className='flex justify-between items-center px-5 pt-[7%]'>
             <img
               src={noteslogo}
-              className={`${isDarkMode ? 'invert' : 'invert-0'}`}
+              className={`${isDarkMode ? 'invert-0' : 'invert'}`}
             />
             <div className='flex items-center gap-4 text-text-main text-2xl'>
               <button onClick={toggleTheme} className="cursor-pointer">
