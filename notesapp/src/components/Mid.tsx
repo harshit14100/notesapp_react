@@ -59,6 +59,8 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
       data = await getNotesByFolder(activeFolder!);
     }
 
+    console.log(noteId,isSearching,type);
+    
     setNotes((data || []).filter((note: any) => routeType === "trash" || !note.deleted));
     } catch (err) {
       // console.error(err);

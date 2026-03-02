@@ -1,7 +1,7 @@
 // const API = 'https://nowted-server.remotestate.com/notes';
 
 
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { IoMdAdd } from "react-icons/io";
 import { createNote } from '../Api/PostApi';
 // import Middle from './Mid';
@@ -22,7 +22,7 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!title.trim() || !content.trim()) {

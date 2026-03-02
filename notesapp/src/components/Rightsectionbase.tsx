@@ -34,9 +34,11 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
     setOverlay(false);
 
     try {
+      console.log(isLoading);
+      
       // console.log(, noteId, { favorite: newFavoriteValue });
       const res = await api.patch(`/notes/${noteId}`, { favorite: newFavoriteValue });
-      // console.log( res.status, res.data);
+      console.log( res.status, res.data);
       onNoteChanged?.();
     } catch (err: any) {
       // console.error(err?.response?.status, err?.response?.data || err);
@@ -55,7 +57,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
     try {
       // console.log(noteId, { archived: newArchivedValue });
       const res = await api.patch(`/notes/${noteId}`, { archived: newArchivedValue });
-      // console.log( res.status, res.data);
+      console.log( res.status, res.data);
       setNote(null);
       onNoteChanged?.();
       if (folderId) {

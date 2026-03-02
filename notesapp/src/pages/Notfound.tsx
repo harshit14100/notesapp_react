@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import notfound from '../assets/istockphoto-1404059706-612x612.jpg'
 
 const NotFound = () => {
