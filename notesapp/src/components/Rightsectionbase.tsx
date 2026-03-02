@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { getNoteById } from "../Api/GetApi";
 import { useNavigate, useParams } from "react-router-dom";
-import { TbFileText, TbStar } from "react-icons/tb";
+import { TbFileText, TbStar, TbStarFilled } from "react-icons/tb";
+import { MdOutlineUnarchive } from "react-icons/md";
 import api from "../Api/API";
+
 import { PiDotsThreeCircle } from "react-icons/pi";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegFolder } from "react-icons/fa";
 import { FiArchive } from "react-icons/fi";
 import { RiDeleteBin7Line } from "react-icons/ri";
+
 import { DeleteNote } from "../Api/Delete";
 
 
@@ -74,7 +77,6 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
     }
   };
 
-  // Save title/content on blur
   const handleSave = async () => {
     if (!noteId || !note) return;
     if (editTitle === note.title && editContent === note.content) return;
@@ -162,7 +164,10 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
                 className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
                 onClick={handleFavorite}
               >
-                <TbStar />
+                {note?.favorite
+                  ? <TbStarFilled className="text-yellow-400" />
+                  : <TbStar />
+                }
                 {note?.favorite ? "Remove from Favorites" : "Add to Favorites"}
               </button>
 
@@ -170,7 +175,10 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
                 className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
                 onClick={handleArchive}
               >
-                <FiArchive />
+                {note?.archived
+                  ? <MdOutlineUnarchive className="text-blue-400" />
+                  : <FiArchive />
+                }
                 {note?.archived ? "Unarchive" : "Archive"}
               </button>
 

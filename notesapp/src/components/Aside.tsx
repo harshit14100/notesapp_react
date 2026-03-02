@@ -19,6 +19,7 @@ import type { NotesType } from '../types/types';
 
 interface AsideProps {
   onSelectFolder: (id: string, name: string) => void;
+  onClearFolder: () => void;
   selectedFolderId: string | null;
   selectedFolderName: string | null;
   setSearchQuery: (query: string) => void; 
@@ -35,6 +36,7 @@ interface Folder {
 
 const Aside: React.FC<AsideProps> = ({
   onSelectFolder,
+  onClearFolder,
   selectedFolderId,
   selectedFolderName,
   setSearchQuery,
@@ -174,6 +176,7 @@ const Aside: React.FC<AsideProps> = ({
 
             <NavLink
               to={'/type/favorite'}
+              onClick={onClearFolder}
               className={({ isActive }) =>
                 `flex px-6 gap-3.5 text-2xl items-center cursor-pointer text-text-muted py-2.5 hover:bg-red-800 hover:text-white ${isActive ? 'bg-red-800 text-white' : ''}`
               }>
@@ -182,6 +185,7 @@ const Aside: React.FC<AsideProps> = ({
 
             <NavLink
               to={'/type/trash'}
+              onClick={onClearFolder}
               className={({ isActive }) =>
                 `flex px-6 gap-3.5 text-2xl text-text-muted cursor-pointer items-center py-2.5 hover:bg-red-800 hover:text-white ${isActive ? 'bg-red-800 text-white' : ''}` }>
               <RiDeleteBin7Line /> <span className='text-sm font-bold'>Trash</span>
@@ -189,6 +193,7 @@ const Aside: React.FC<AsideProps> = ({
 
             <NavLink
               to={'/type/archive'}
+              onClick={onClearFolder}
               className={({ isActive }) =>
                 `flex px-6 gap-3.5 text-2xl items-center cursor-pointer py-2.5 text-text-muted hover:bg-red-800 hover:text-white ${isActive ? 'bg-red-800 text-white' : ''}`
               }>
