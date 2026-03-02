@@ -22,7 +22,7 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title.trim() || !content.trim()) {
@@ -56,7 +56,6 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
     }
   };
 
-  console.log("FolderId in AddNote:", folderId);
   const handleCancel = () => {
     setIsFormOpen(false);
     setTitle('');

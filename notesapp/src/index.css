@@ -1,78 +1,78 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-bg-aside: var(--bg-aside);
-  --color-bg-main: var(--bg-main);
-  --color-bg-right: var(--bg-right);
-  --color-bg-popover: var(--bg-popover);
+  --color-bg-aside: #f4f4f5;
+  --color-bg-main: #ffffff;
+  --color-bg-right: #f4f4f5;
+  --color-bg-popover: #ffffff;
+  --color-primary: rgba(0,0,0,0.6);
+  --color-primary-hover: #fee2e2;
+  --color-text-delete: #ef4444;
 
-  --color-primary: var(--primary-text);
-  --color-primary-hover: var(--primary-hover);
-  --color-text-delete: #ef4444; 
+  --color-button: #e4e4e7;
+  --color-button-hover: #d4d4d8;
 
-  --color-button: var(--button-bg);
-  --color-button-hover: var(--button-hover);
   
-  --color-text-main: var(--text-main);
-  --color-text-muted: var(--text-muted);
-  --color-text-dim: var(--text-dim);
-  
-  --color-border-dark: var(--border-color);
-  --color-border-input: var(--border-input);
---shadow-red-glow: 0 15px 30px 5px rgba(159, 7, 18, 0.4), 0 5px 15px -5px rgba(159, 7, 18, 0.4);
+  --color-text-main: #18181b;
+  --color-text-muted: #52525b;
+  --color-text-dim: rgba(0,0,0,0.4);
+  --color-border-dark: rgba(0,0,0,0.1);
+  --color-border-input: #d4d4d8;
+
+  --shadow-red-glow: 0 15px 30px 5px rgba(159,7,18,0.4), 0 5px 15px -5px rgba(159,7,18,0.4);
 }
-
-
-:root {
-  --bg-aside: #f4f4f5;         /* zinc-100 */
-  --bg-main: #ffffff;          /* White */
-  --bg-right: #f4f4f5;         /* zinc-100 */
-  --bg-popover: #ffffff;
-  
-  --primary-text: rgba(0, 0, 0, 0.6);
-  --primary-hover: #fee2e2;    /* Soft red */
-  --primary-hover-aside: #9b2c2c;;
-
-  --button-bg: #e4e4e7;       /* zinc-200 */
-  --button-hover: #d4d4d8;    /* zinc-300 */
-
-  --text-main: #18181b;        /* zinc-950 */
-  --text-muted: #52525b;       /* zinc-600 */
-  --text-dim: rgba(0, 0, 0, 0.4);
-
-  --border-color: rgba(0, 0, 0, 0.1);
-  --border-input: #d4d4d8;
-}
-
-:where(.dark) {
-  --bg-aside: #181818;
-  --bg-main: #1c1c1c;
-  --color-secondary: rgba(28, 28, 28, 1);
-  --bg-right: #181818;
-  --bg-popover: #333333;
-
-  --primary-text: rgba(255, 255, 255, 0.6);
-  --primary-hover: #9f0712;
-
-  --button-bg: #52525b;       /* zinc-600 */
-  --button-hover: #3f3f46;    /* zinc-700 */
-  
-  --text-main: #ffffff;
-  --text-muted: #a1a1aa;      /* zinc-400 */
-  --text-dim: rgba(255, 255, 255, 0.4);
-  
-  --border-color: rgba(255, 255, 255, 0.1);
-  --border-input: #3f3f46;
-}
-
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Light mode css*/
+:root {
+  --bg-aside: #f4f4f5;
+  --bg-main: #ffffff;
+  --bg-right: #f4f4f5;
+  --bg-popover: #ffffff;
+  --primary-hover: #fee2e2;
+  --button-bg: #e4e4e7;
+  --button-hover: #d4d4d8;
+  --text-main: #18181b;
+  --text-muted: #52525b;
+  --text-dim: rgba(0,0,0,0.4);
+  --border-color: rgba(0,0,0,0.1);
+  --border-input: #d4d4d8;
+}
+
+.dark {
+  --bg-aside: #181818;
+  --bg-main: #1c1c1c;
+  --bg-right: #181818;
+  --bg-popover: #333333;
+  --primary-hover: #9f0712;
+  --button-bg: #52525b;
+  --button-hover: #3f3f46;
+  --text-main: #ffffff;
+  --text-muted: #a1a1aa;
+  --text-dim: rgba(255,255,255,0.4);
+  --border-color: rgba(255,255,255,0.1);
+  --border-input: #3f3f46;
+
+  --color-bg-aside: #181818;
+  --color-bg-main: #1c1c1c;
+  --color-bg-right: #181818;
+  --color-bg-popover: #333333;
+  --color-primary-hover: #9f0712;
+  --color-button: #52525b;
+  --color-button-hover: #3f3f46;
+  --color-text-main: #ffffff;
+  --color-text-muted: #a1a1aa;
+  --color-text-dim: rgba(255,255,255,0.4);
+  --color-border-dark: rgba(255,255,255,0.1);
+  --color-border-input: #3f3f46;
+}
+
 html, body, #root {
-    height: 100%;
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    transition: background-color 0.2s ease, color 0.2s ease;
+  height: 100%;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

@@ -10,7 +10,7 @@ interface FoldersProps {
 }
 
 
-const Folders: React.FC<FoldersProps> = ({ folders, onSelectFolder }) => {
+const Folders: React.FC<FoldersProps> = ({ folders, onSelectFolder, selectedFolderId }) => {
 
   return (
     <div>
@@ -21,7 +21,11 @@ const Folders: React.FC<FoldersProps> = ({ folders, onSelectFolder }) => {
           <div key={folderItem.id || index}>
           <div 
           onClick={() => onSelectFolder(folderItem.id, folderItem.name)}
-            className='flex items-center gap-3.5 px-4 py-2.5 text-2xl cursor-pointer text-text-dim hover:bg-red-800 hover:text-bg-popover rounded-lg transition-colors'>
+            className={`flex items-center gap-3.5 px-4 py-2.5 text-2xl cursor-pointer rounded-lg transition-colors ${
+              selectedFolderId === folderItem.id
+                ? 'bg-red-800 text-white'
+                : 'text-text-dim hover:bg-red-800 hover:text-bg-popover'
+            }`}>
             <PiFolderSimpleBold /> 
             <h2 className='text-sm font-bold'>{folderItem.name}</h2> 
           </div>

@@ -41,6 +41,7 @@ function Home() {
           setSearchQuery={setSearchQuery}
           isDarkMode={isDarkMode}
           toggleTheme={toggleTheme}
+          onNoteAdded={triggerRefetch}
         />
       </div>
       <div className="w-[25%] h-full border-r border-white/5">

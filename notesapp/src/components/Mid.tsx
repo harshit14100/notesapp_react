@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { getRecentNotes, getNotesByFolder, getDeletedNotes, getFavoriteNotes, getArchiveNotes } from "../Api/GetApi";
+import { getRecentNotes, getNotesByFolder, getDeletedNotes, getFavoriteNotes, getArchiveNotes, searchbar } from "../Api/GetApi";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { DeleteNote } from "../Api/Delete";
-import { IoSearch, IoClose } from "react-icons/io5";
-import { useNavigate, useParams  } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // import AddNote from "./NewNote";
 // import { IoMdAdd } from "react-icons/io";
 // import { createNote } from '../Api/PostApi';
@@ -22,7 +21,7 @@ interface Note {
   createdAt: string;
 }
 
-function Middle({ selectedfolderId, selectedFoldername, type, refetchKey }: MiddleProps) {
+const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: MiddleProps) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Note[]>([]);
@@ -84,6 +83,7 @@ function Middle({ selectedfolderId, selectedFoldername, type, refetchKey }: Midd
 
     setIsSearching(true);
     const delay = setTimeout(async () => {
+      // console.log(searchQuery);
       try {
         const data = await searchbar(searchQuery);
         setSearchResults(data || []);
@@ -94,6 +94,7 @@ function Middle({ selectedfolderId, selectedFoldername, type, refetchKey }: Midd
         setIsSearching(false);
       }
     }, 400);
+    
 
     return () => clearTimeout(delay);
   }, [searchQuery]);
@@ -115,8 +116,6 @@ function Middle({ selectedfolderId, selectedFoldername, type, refetchKey }: Midd
     navigate(`/notes/${activeFolder}/${id}`);
   };
 
-  console.log("TYPE:", routeType);
-console.log("FOLDER:", folderId);
   const skeletonArray = [1, 2, 3];
 
   const displayNotes = searchQuery.trim().length > 0 ? searchResults : notes;
