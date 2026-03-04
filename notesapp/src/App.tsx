@@ -15,19 +15,19 @@ function App() {
       element:<Home/>,  
     },
   {
-    path:"folder/:folderId",
+    path:"/folder/:folderId",
     element:<Home/>
   },
   {
-    path:"notes/:folderId/:noteId",
+    path:"/notes/:folderId/:noteId",
     element:<Home/>
   },
   {
-    path:"type/:type",
+    path:"/type/:type",
     element:<Home />
   },
   {
-    path:"type/:type/:noteId",
+    path:"/type/:type/:noteId",
     element:<Home />
   }
     
@@ -43,6 +43,3 @@ function App() {
 }
 
 export default App;
-
-
-

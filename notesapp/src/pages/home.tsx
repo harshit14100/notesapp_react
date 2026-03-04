@@ -58,6 +58,7 @@ function Home() {
             selectedfolderId={selectedFolderId}
             selectedFoldername={selectedFolderName}
             refetchKey={refetchKey}
+            onNoteDeleted={triggerRefetch}
           />
         </div>
         <div className="w-[55%] h-full">

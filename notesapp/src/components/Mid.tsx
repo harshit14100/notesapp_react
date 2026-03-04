@@ -12,6 +12,7 @@ export type MiddleProps = {
   selectedFoldername?: string | null;
   type?:string 
   refetchKey?: number;
+  onNoteDeleted?: () => void;
 }
 
 interface Note {
@@ -21,7 +22,7 @@ interface Note {
   createdAt: string;
 }
 
-const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: MiddleProps) => {
+const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey, onNoteDeleted }: MiddleProps) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Note[]>([]);
@@ -59,9 +60,15 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
       data = await getNotesByFolder(activeFolder!);
     }
 
-    console.log(noteId,isSearching,type);
+    // console.log(noteId,isSearching,type);
     
-    setNotes((data || []).filter((note: any) => routeType === "trash" || !note.deleted));
+    // for trash/archive/favorite the api already returns the right notes so we dont need to filter
+    // for folder/recents we filter out deleted and archived notes on the client side as a safety net
+    if (routeType === "trash" || routeType === "archive" || routeType === "favorite") {
+      setNotes(data || []);
+    } else {
+      setNotes((data || []).filter((note: any) => !note.deleted && !note.archived));
+    }
     } catch (err) {
       // console.error(err);
       setError("Failed to load notes.");
@@ -104,11 +111,16 @@ const Middle= ({ selectedfolderId, selectedFoldername, type, refetchKey }: Middl
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
 
+    setNotes(prev => prev.filter(note => note.id !== id));
+    setSearchResults(prev => prev.filter(note => note.id !== id));
+
     const success = await DeleteNote(id);
 
     if (success) {
-      setNotes(prev => prev.filter(note => note.id !== id));
-      setSearchResults(prev => prev.filter(note => note.id !== id));
+      fetchNotes();
+      onNoteDeleted?.();
+    } else {
+      fetchNotes();
     }
   };
   // console.log(selectedFoldername);

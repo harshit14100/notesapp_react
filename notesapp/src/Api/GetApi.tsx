@@ -11,7 +11,7 @@ export const getRecentNotes = async () => {
 };
 
 export const getNotesByFolder = async (folderId: string) => {
-  const res = await api.get("/notes", { params: { folderId } });
+  const res = await api.get("/notes", { params: { folderId, deleted: false } });
   return res.data.notes;
 };
 

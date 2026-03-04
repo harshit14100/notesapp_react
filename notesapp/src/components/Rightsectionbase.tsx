@@ -34,7 +34,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
     setOverlay(false);
 
     try {
-      console.log(isLoading);
+      // console.log(isLoading);
       
       // console.log(, noteId, { favorite: newFavoriteValue });
       const res = await api.patch(`/notes/${noteId}`, { favorite: newFavoriteValue });
@@ -57,7 +57,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
     try {
       // console.log(noteId, { archived: newArchivedValue });
       const res = await api.patch(`/notes/${noteId}`, { archived: newArchivedValue });
-      console.log( res.status, res.data);
+      // console.log( res.status, res.data);
       setNote(null);
       onNoteChanged?.();
       if (folderId) {
@@ -91,7 +91,8 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
   const handleRestore = async () => {
     try {
       setIsRestoring(true);
-      await api.patch(`/notes/${noteId}`, { deleted: false });
+      // also resetting archived so the note actually shows back up in its folder
+      await api.patch(`/notes/${noteId}`, { deleted: false, archived: false });
       onNoteChanged?.();
       const folderId = note?.folder?.id;
       if (folderId) {

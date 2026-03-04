@@ -2,7 +2,7 @@ import api from "../Api/API";
 
 export const DeleteNote = async (id: string): Promise<boolean> => {
   try {
-    await api.patch(`/notes/${id}`, { deleted: true });
+    await api.delete(`/notes/${id}`);
     return true;
   } catch {
     return false;

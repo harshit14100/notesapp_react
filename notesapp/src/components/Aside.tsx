@@ -179,6 +179,7 @@ const Aside: React.FC<AsideProps> = ({
 
             <NavLink
               to={'/type/favorite'}
+              end={false}
               onClick={onClearFolder}
               className={({ isActive }) =>
                 `flex px-6 gap-3.5 text-2xl items-center cursor-pointer text-text-muted py-2.5 hover:bg-red-800 hover:text-white ${isActive ? 'bg-red-800 text-white' : ''}`
@@ -188,6 +189,7 @@ const Aside: React.FC<AsideProps> = ({
 
             <NavLink
               to={'/type/trash'}
+              end={false}
               onClick={onClearFolder}
               className={({ isActive }) =>
                 `flex px-6 gap-3.5 text-2xl text-text-muted cursor-pointer items-center py-2.5 hover:bg-red-800 hover:text-white ${isActive ? 'bg-red-800 text-white' : ''}` }>
@@ -196,6 +198,7 @@ const Aside: React.FC<AsideProps> = ({
 
             <NavLink
               to={'/type/archive'}
+              end={false}
               onClick={onClearFolder}
               className={({ isActive }) =>
                 `flex px-6 gap-3.5 text-2xl items-center cursor-pointer py-2.5 text-text-muted hover:bg-red-800 hover:text-white ${isActive ? 'bg-red-800 text-white' : ''}`
