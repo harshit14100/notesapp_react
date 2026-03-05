@@ -17,18 +17,13 @@ import { GoSun, GoMoon } from "react-icons/go";
 import { searchbar } from '../Api/GetApi';
 import { NavLink } from 'react-router-dom';
 import type { NotesType } from '../types/types';
+import { useNotes } from '../context/Notescontext';
 
 
 interface AsideProps {
   onSelectFolder: (id: string, name: string) => void;
   onClearFolder: () => void;
   selectedFolderId: string | null;
-  selectedFolderName: string | null;
-  setSearchQuery: (query: string) => void; 
-  searchQuery: string; 
-  isDarkMode: boolean;
-  toggleTheme: () => void;
-  onNoteAdded?: () => void;
 }
 
 interface Folder {
@@ -40,13 +35,9 @@ const Aside: React.FC<AsideProps> = ({
   onSelectFolder,
   onClearFolder,
   selectedFolderId,
-  selectedFolderName,
-  setSearchQuery,
-  isDarkMode,
-  toggleTheme,
-  onNoteAdded,
+}) => {
+  const { searchQuery, setSearchQuery, isDarkMode, toggleTheme, triggerRefetch, selectedFolderName } = useNotes();
 
-  searchQuery = "" }) => {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [searchResults, setSearchResults] = useState<NotesType[]>([]);
   const [showSearch, setShowSearch] = useState(false);
@@ -130,7 +121,8 @@ const Aside: React.FC<AsideProps> = ({
 
           <div className='py-8 relative pl-8 font-bold'>
             <div className='rounded w-[90%] gap-2'>
-              <AddNote folderId={selectedFolderId} onNoteAdded={onNoteAdded} />
+              {/* triggerRefetch now comes from context so new note shows up everywhere */}
+              <AddNote folderId={selectedFolderId} onNoteAdded={triggerRefetch} />
             </div>
           </div>
 

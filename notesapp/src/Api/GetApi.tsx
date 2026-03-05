@@ -29,7 +29,7 @@ export const searchbar = async (query: string) => {
 
 export const getDeletedNotes = async () => {
   try {
-    const res = await api.get(`/notes?deleted=true&limit=1000`);
+    const res = await api.get(`/notes?deleted=true&limit=10`);
     return res.data.notes;
   } catch (e) {
     if (e instanceof Error){
@@ -41,7 +41,7 @@ export const getDeletedNotes = async () => {
 
 export const getFavoriteNotes = async () => {
   try {
-    const res = await api.get(`/notes?favorite=true&limit=1000`);
+    const res = await api.get(`/notes?favorite=true&limit=10`);
     return res.data.notes;
   } catch (e) {
     if (e instanceof Error) {
@@ -53,7 +53,7 @@ export const getFavoriteNotes = async () => {
 
 export const getArchiveNotes = async () => {
   try {
-    const res = await api.get(`/notes?archived=true&limit=1000`);
+    const res = await api.get(`/notes?archived=true&limit=10`);
     return res.data.notes;
   } catch (e) {
     if (e instanceof Error) {

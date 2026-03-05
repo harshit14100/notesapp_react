@@ -5,6 +5,7 @@ import { TbFileText, TbStar, TbStarFilled } from "react-icons/tb";
 import { MdOutlineUnarchive } from "react-icons/md";
 import { LuHistory } from "react-icons/lu";
 import api from "../Api/API";
+import { useNotes } from "../context/Notescontext";
 
 import { PiDotsThreeCircle } from "react-icons/pi";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -13,7 +14,7 @@ import { FiArchive } from "react-icons/fi";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { DeleteNote } from "../Api/Delete";
 
-const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
+const RightSide = () => {
   const [overlay, setOverlay] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [editTitle, setEditTitle] = useState<string>("");
@@ -25,23 +26,28 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
   const navigate = useNavigate();
   const [note, setNote] = useState<any>(null);
 
+  const { triggerRefetch } = useNotes();
+
   const handleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!noteId || !note) return;
 
     const newFavoriteValue = !note.favorite;
-    setNote((prev: any) => ({ ...prev, favorite: newFavoriteValue }));
     setOverlay(false);
 
     try {
-      // console.log(isLoading);
-      
-      // console.log(, noteId, { favorite: newFavoriteValue });
-      const res = await api.patch(`/notes/${noteId}`, { favorite: newFavoriteValue });
-      console.log( res.status, res.data);
-      onNoteChanged?.();
+      await api.patch(`/notes/${noteId}`, { favorite: newFavoriteValue });
+
+      if (routeType === "favorite" && !newFavoriteValue) {
+        setNote(null);
+        triggerRefetch();
+        navigate("/type/favorite");
+      } else {
+        setNote((prev: any) => ({ ...prev, favorite: newFavoriteValue }));
+        triggerRefetch();
+      }
     } catch (err: any) {
-      // console.error(err?.response?.status, err?.response?.data || err);
+      // Revert the local state on API failure
       setNote((prev: any) => ({ ...prev, favorite: !newFavoriteValue }));
     }
   };
@@ -55,18 +61,16 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
     setOverlay(false);
 
     try {
-      // console.log(noteId, { archived: newArchivedValue });
-      const res = await api.patch(`/notes/${noteId}`, { archived: newArchivedValue });
-      // console.log( res.status, res.data);
+      await api.patch(`/notes/${noteId}`, { archived: newArchivedValue });
       setNote(null);
-      onNoteChanged?.();
+      triggerRefetch();
       if (folderId) {
         navigate(`/folder/${folderId}`);
       } else {
         navigate(`/`);
       }
     } catch (err: any) {
-      // console.error(err?.response?.status, err?.response?.data || err);
+      // silent
     }
   };
 
@@ -77,23 +81,22 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
       const folderId = note?.folder?.id;
       await DeleteNote(noteId);
       setNote(null);
-      onNoteChanged?.();
+      triggerRefetch();
       if (folderId) {
         navigate(`/folder/${folderId}`);
       } else {
         navigate(`/`);
       }
     } catch (err) {
-      // console.error( err);
+      // silent
     }
   };
 
   const handleRestore = async () => {
     try {
       setIsRestoring(true);
-      // also resetting archived so the note actually shows back up in its folder
       await api.patch(`/notes/${noteId}`, { deleted: false, archived: false });
-      onNoteChanged?.();
+      triggerRefetch();
       const folderId = note?.folder?.id;
       if (folderId) {
         navigate(`/folder/${folderId}`);
@@ -101,7 +104,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
         navigate(`/`);
       }
     } catch (err) {
-      // console.error(err);
+      // silent
     } finally {
       setIsRestoring(false);
     }
@@ -119,9 +122,9 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
       if (updated?.data?.note) {
         setNote(updated.data.note);
       }
-      onNoteChanged?.();
+      triggerRefetch();
     } catch (err) {
-      // console.error( err);
+      // silent
     } finally {
       setIsSaving(false);
     }
@@ -146,7 +149,7 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
         setEditTitle(res.title || "");
         setEditContent(res.content || "");
       } catch (err) {
-        // console.error( err);
+        // silent
       } finally {
         setIsLoading(false);
       }
@@ -175,16 +178,14 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
         <div className="text-text-dim">
           <LuHistory size={80} strokeWidth={1} />
         </div>
-
         <h2 className="text-text-main text-2xl font-semibold text-center">
           Restore "{note.title}"
         </h2>
-
-        <p className="text-text-muted text-sm text-center max-w-md leading-relaxed ">
-          Don't want to lose this note? It's not too late! Just click the 'Restore'
-          button and it will be added back to your list. It's that simple.
+        <p className="text-text-muted text-sm text-center max-w-md leading-relaxed">
+          Don't want to lose this note? It's not too late! Just click the
+          'Restore' button and it will be added back to your list. It's that
+          simple.
         </p>
-
         <button
           onClick={handleRestore}
           disabled={isRestoring}
@@ -223,10 +224,11 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
                 className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
                 onClick={handleFavorite}
               >
-                {note?.favorite
-                  ? <TbStarFilled className="text-yellow-400" />
-                  : <TbStar />
-                }
+                {note?.favorite ? (
+                  <TbStarFilled className="text-yellow-400" />
+                ) : (
+                  <TbStar />
+                )}
                 {note?.favorite ? "Remove from Favorites" : "Add to Favorites"}
               </button>
 
@@ -234,10 +236,11 @@ const RightSide = ({ onNoteChanged }: { onNoteChanged?: () => void }) => {
                 className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
                 onClick={handleArchive}
               >
-                {note?.archived
-                  ? <MdOutlineUnarchive className="text-blue-400" />
-                  : <FiArchive />
-                }
+                {note?.archived ? (
+                  <MdOutlineUnarchive className="text-blue-400" />
+                ) : (
+                  <FiArchive />
+                )}
                 {note?.archived ? "Unarchive" : "Archive"}
               </button>
 
