@@ -14,6 +14,7 @@ import { FiArchive } from "react-icons/fi";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { DeleteNote } from "../Api/Delete";
 import { FaChevronDown } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const RightSide = () => {
 
@@ -237,11 +238,35 @@ const RightSide = () => {
     <div className="w-full h-full bg-bg-right flex flex-col p-[5%] gap-7 transition-colors">
 
       <div className="flex justify-between items-center">
-        <input
+        {/* <input
           className="text-3xl font-bold text-text-main bg-transparent border-none outline-none w-full"
           value={editTitle}
           onChange={(e) => setEditTitle(e.target.value)}
           onBlur={handleSave}
+        /> */}
+
+          <motion.input
+          className="text-3xl font-bold text-text-main bg-transparent border-none outline-none w-full"
+          value={editTitle}
+          onChange={(e) => setEditTitle(e.target.value)}
+          onBlur={handleSave}
+          animate={
+            editTitle === "Remotestate"
+              ? {
+                  scale: [1, 1.05, 1],
+                  textShadow: [
+                    "0px 0px 0px rgba(99,102,241,0)",
+                    "0px 0px 15px rgba(99,102,241,0.8)",
+                    "0px 0px 0px rgba(99,102,241,0)",
+                  ],
+                }
+              : {}
+          }
+          transition={{
+            duration: 1,
+            repeat: editTitle === "Remotestate" ? Infinity : 0,
+            ease: "easeInOut",
+          }}
         />
 
         <div className="cursor-pointer text-text-muted hover:text-text-main flex flex-col relative flex-shrink-0">
@@ -373,3 +398,8 @@ const RightSide = () => {
 };
 
 export default RightSide;
+
+
+
+
+
