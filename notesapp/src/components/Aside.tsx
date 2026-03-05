@@ -103,7 +103,7 @@ const Aside: React.FC<AsideProps> = ({
             <div className='flex items-center gap-4 text-text-main text-2xl'>
 
               <button onClick={toggleTheme} className="cursor-pointer">
-                {isDarkMode ? <GoMoon /> : <GoSun />}
+                {isDarkMode ?  <GoSun />: <GoMoon />}
               </button>
 
               <button onClick={handleSearch} className='text-2xl'>

@@ -13,6 +13,7 @@ import { FaRegFolder } from "react-icons/fa";
 import { FiArchive } from "react-icons/fi";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { DeleteNote } from "../Api/Delete";
+import { FaChevronDown } from "react-icons/fa";
 
 const RightSide = () => {
 
@@ -22,11 +23,12 @@ const RightSide = () => {
   const [editContent, setEditContent] = useState<string>("");
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isRestoring, setIsRestoring] = useState<boolean>(false);
+  const [folderDropdown, setfolderDropdown] = useState(false)
 
   const { noteId, type: routeType } = useParams();
   const navigate = useNavigate();
   const [note, setNote] = useState<any>(null);
-  const { triggerRefetch } = useNotes();
+  const { triggerRefetch, folders } = useNotes();
 
   const handleFavorite = async (e: React.MouseEvent) => {
 
@@ -119,6 +121,22 @@ const RightSide = () => {
     }
   };
 
+   const handleMoveNote = async (newFolderId: string, newFolderName: string) => {
+    if (!note) return;
+    try {
+      await api.patch(`/notes/${note.id}`, { folderId: newFolderId });
+      setNote({
+        ...note,
+        folderId: newFolderId,
+        folder: { name: newFolderName },
+      });
+      setfolderDropdown(false);
+      navigate(`/${newFolderId}/${note.id}`);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+    }
+  };
+
   const handleSave = async () => {
     if (!noteId || !note) return;
     if (editTitle === note.title && editContent === note.content) return;
@@ -189,6 +207,7 @@ const RightSide = () => {
       </div>
     );
   }
+
   if (note.deleted || routeType === "trash") {
     return (
       <div className="w-full h-full bg-bg-right flex flex-col items-center justify-center gap-5 px-10">
@@ -216,6 +235,7 @@ const RightSide = () => {
 
   return (
     <div className="w-full h-full bg-bg-right flex flex-col p-[5%] gap-7 transition-colors">
+
       <div className="flex justify-between items-center">
         <input
           className="text-3xl font-bold text-text-main bg-transparent border-none outline-none w-full"
@@ -223,19 +243,21 @@ const RightSide = () => {
           onChange={(e) => setEditTitle(e.target.value)}
           onBlur={handleSave}
         />
+
         <div className="cursor-pointer text-text-muted hover:text-text-main flex flex-col relative flex-shrink-0">
+
           <PiDotsThreeCircle
             size={30}
             onClick={(e) => {
               e.stopPropagation();
               setOverlay((prev) => !prev);
-            }}
-          />
+            }}/>
 
           {overlay && (
             <div
               className="absolute top-12 right-0 rounded p-4 w-60 text-md flex flex-col gap-4 bg-bg-popover text-text-main shadow-xl border border-border-dark z-10"
               onClick={(e) => e.stopPropagation()}>
+
               <button
                 className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
                 onClick={handleFavorite}>
@@ -247,6 +269,7 @@ const RightSide = () => {
                 )}
                 {note?.favorite ? "Remove from Favorites" : "Add to Favorites"}
               </button>
+
               <button
                 className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
                 onClick={handleArchive}>
@@ -268,11 +291,15 @@ const RightSide = () => {
                 <RiDeleteBin7Line />
                 Delete
               </button>
+
             </div>
           )}
+
         </div>
       </div>
-      <div className="flex flex-col divide-y divide-border-dark">
+
+      <div className="flex flex-col divide-y divide-border-dark relative">
+
         <div className="flex items-center gap-20 py-3">
           <div className="text-text-dim flex items-center gap-5">
             <FaRegCalendarAlt size={20} />
@@ -283,19 +310,53 @@ const RightSide = () => {
             {new Date(note.createdAt).toLocaleDateString("en-GB")}
           </div>
         </div>
-        <div className="flex items-center gap-17.5 py-3">
+
+        <div className="flex items-center gap-6 py-3 relative">
           <div className="text-text-dim flex items-center gap-5">
             <FaRegFolder size={20} />
             <h3 className="text-xs font-semibold tracking-wider">Folder</h3>
           </div>
+
           <div className="text-text-main text-sm underline decoration-border-input underline-offset-4 font-bold">
             {note.folder?.name}
           </div>
+
+          <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setfolderDropdown((prev) => !prev);
+                setOverlay(false);
+              }}
+              className="text-dim hover:text-text cursor-pointer"
+            >
+              <FaChevronDown  size={16} />
+            </button>
+
+          {folderDropdown && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="absolute top-10 left-32 bg-overlay rounded-md p-2 w-48 flex flex-col gap-1 z-50 shadow-lg max-h-60 overflow-y-auto hide-scrollbar"
+            >
+              {folders?.map((f: any) => (
+                <button
+                  key={f.id}
+                  onClick={() => handleMoveNote(f.id, f.name)}
+                  className={`text-sm text-left px-3 py-2 rounded cursor-pointer hover:bg-secondary-hover
+                    ${note.folder?.name === f.name ? "text-primary font-semibold" : "text-text"}`}
+                >
+                  {f.name}
+                </button>
+              ))}
+            </div>
+          )}
+
         </div>
-        {isSaving && (
-          <p className="text-xs text-text-muted py-1">Saving...</p>
-        )}
+
       </div>
+
+      {isSaving && (
+        <p className="text-xs text-text-muted py-1">Saving...</p>
+      )}
 
       <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <textarea
@@ -306,6 +367,7 @@ const RightSide = () => {
           placeholder="Start writing..."
         />
       </div>
+
     </div>
   );
 };
