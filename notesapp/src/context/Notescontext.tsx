@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
-
 interface NotesContextType {
   refetchKey: number;
   triggerRefetch: () => void;
@@ -25,7 +24,6 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
-
     document.documentElement.classList.add("dark");
   }, []);
 
@@ -73,6 +71,8 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
 
 export const useNotes = () => {
   const ctx = useContext(NotesContext);
-  if (!ctx) throw new Error("useNotes must be used inside NotesProvider");
+  if (!ctx) {
+    throw new Error("useNotes must be used inside NotesProvider");
+  }
   return ctx;
 };

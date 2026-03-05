@@ -10,28 +10,40 @@ import Home from "./pages/home";
 
 function App() {
     const router = createBrowserRouter([
-    {
-      path:'/',
-      element:<Home/>,  
-    },
   {
-    path:"/folder/:folderId",
-    element:<Home/>
+    path: '/',
+    element: <Home />,
+  },
+
+  {
+    path: "/notes/recent/:noteId",
+    element: <Home />,
+  },
+
+  {
+    path: "/notes/:folderId",
+    element: <Home />,
+  },
+
+  {
+    path: "/notes/:folderId/:noteId",
+    element: <Home />,
+  },
+
+  {
+    path: "/type/:type",
+    element: <Home />,
+  },
+
+  {
+    path: "/type/:type/:noteId",
+    element: <Home />,
   },
   {
-    path:"/notes/:folderId/:noteId",
-    element:<Home/>
-  },
-  {
-    path:"/type/:type",
-    element:<Home />
-  },
-  {
-    path:"/type/:type/:noteId",
-    element:<Home />
-  }
-    
-  ]);
+  path: "*",
+  element: <div className="p-10 text-center">Page not found</div>
+}
+]);
 
   
   
