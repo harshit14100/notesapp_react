@@ -24,7 +24,7 @@ const Folders: React.FC<FoldersProps> = ({ folders, onSelectFolder, selectedFold
             <div 
               onClick={() => {
                 onSelectFolder(folderItem.id, folderItem.name);
-                navigate(`/notes/${folderItem.id}`);   // ⭐ THIS FIXES THE BUG
+                navigate(`/notes/${folderItem.id}`);  
               }}
               className={`flex items-center gap-3.5 px-4 py-2.5 text-2xl cursor-pointer rounded-lg transition-colors ${
                 selectedFolderId === folderItem.id

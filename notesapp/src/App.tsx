@@ -14,27 +14,22 @@ function App() {
     path: '/',
     element: <Home />,
   },
-
   {
     path: "/notes/recent/:noteId",
     element: <Home />,
   },
-
   {
     path: "/notes/:folderId",
     element: <Home />,
   },
-
   {
     path: "/notes/:folderId/:noteId",
     element: <Home />,
   },
-
   {
     path: "/type/:type",
     element: <Home />,
   },
-
   {
     path: "/type/:type/:noteId",
     element: <Home />,

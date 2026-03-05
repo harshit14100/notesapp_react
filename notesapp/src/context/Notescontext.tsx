@@ -22,13 +22,13 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [selectedFolderName, setSelectedFolderName] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
+  
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
   }, []);
 
   const triggerRefetch = () => setRefetchKey((k) => k + 1);
-
   const setSelectedFolder = (id: string, name: string) => {
     setSelectedFolderId(id);
     setSelectedFolderName(name);
@@ -54,8 +54,8 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
       value={{
         refetchKey,
         triggerRefetch,
-        selectedFolderId,
         selectedFolderName,
+        selectedFolderId,
         setSelectedFolder,
         clearSelectedFolder,
         searchQuery,
