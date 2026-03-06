@@ -5,6 +5,7 @@ import React, {  useState } from 'react';
 import { IoMdAdd } from "react-icons/io";
 import { createNote } from '../Api/PostApi';
 // import Middle from './Mid';
+import toast from "react-hot-toast";
 
 interface AddNoteProps {
   folderId: string | null;   
@@ -53,6 +54,7 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
   } 
 } finally {
       setIsSubmitting(false);
+      toast("Note Created")
     }
   };
 

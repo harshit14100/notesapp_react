@@ -1,23 +1,25 @@
 // import Folders from './Folders';
 // import NewFolder from "./NewFolder";
-import React, { useEffect, useState } from 'react'
-import noteslogo from '../assets/logo.svg'
+import React, { useEffect, useState } from "react";
+import noteslogo from "../../assets/logo.svg";
 import { IoSearch } from "react-icons/io5";
 import { TbStar } from "react-icons/tb";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { FiArchive } from "react-icons/fi";
 import { PiFolderSimplePlusBold } from "react-icons/pi";
-import AddNote from './NewNote';
-import Recentnotes from './Recentnotes';
-import Folders from './Folders';
-import NewFolder from "./NewFolder";
-import { getFolders } from "../Api/GetApi";
-import '../App.css'
-import { GoSun, GoMoon } from "react-icons/go"; 
-import { searchbar } from '../Api/GetApi';
-import { NavLink } from 'react-router-dom';
-import type { NotesType } from '../types/types';
-import { useNotes } from '../context/Notescontext';
+import { GoSun, GoMoon } from "react-icons/go";
+
+import type { Folder } from "../../types/types";
+import AddNote from "../NewNote";
+import Recentnotes from "../Recentnotes";
+import Folders from "../Folders";
+import NewFolder from "../NewFolder";
+import { getFolders } from "../../Api/FolderAPI";
+import { searchbar } from "../../Api/GetApi";
+import "../../App.css";
+import { NavLink } from "react-router-dom";
+import type { NotesType } from "../../types/types";
+import { useNotes } from "../../context/Notescontext";
 
 
 interface AsideProps {
@@ -26,10 +28,10 @@ interface AsideProps {
   selectedFolderId: string | null;
 }
 
-interface Folder {
-  id: string;
-  name: string;
-}
+// interface Folder {
+//   id: string;
+//   name: string;
+// }
 
 const Aside: React.FC<AsideProps> = ({
   onSelectFolder,
@@ -45,20 +47,13 @@ const Aside: React.FC<AsideProps> = ({
   const [showNewFolder, setShowNewFolder] = useState(false);
 
   const fetchFolders = async () => {
-    try {
-      const data = await getFolders();
-
-      if (Array.isArray(data)) {
-        setFolders(data);
-      } else {
-        setFolders(data?.folders || []);
-      }
-
-    } catch (error) {
-      //silent
-      setFolders([]);
-    }
-  };
+  try {
+    const data = await getFolders();
+    setFolders(data);
+  } catch {
+    setFolders([]);
+  }
+};
 
 
 
@@ -167,8 +162,7 @@ const Aside: React.FC<AsideProps> = ({
                 onSelectFolder={onSelectFolder}
                 selectedFolderId={selectedFolderId}
                 selectedFoldername={selectedFolderName}
-              />
-
+                refreshFolders={fetchFolders}/>
             </div>
           </div>
         </div>

@@ -1,11 +1,9 @@
 import axios from "axios";
+const API = import.meta.env.VITE_Api;
 
 const api = axios.create({
-  baseURL: "https://nowted-server.remotestate.com",
+  baseURL: API,
+  headers: { "Content-Type": "application/json" },
 });
-// export const getFolders = async () => {
-//   const res = await api.get("/api/folders");
-//   return res.data;
-// };
 
 export default api;

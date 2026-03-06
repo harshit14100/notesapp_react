@@ -16,3 +16,10 @@ export type  NotesType   =   {
         "deletedAt": null
       }
 }
+
+
+export type Folder = {
+  id: string;
+  name: string;
+  createdAt: string;
+};
