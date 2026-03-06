@@ -72,13 +72,12 @@ export const getDeletedNotes = async (): Promise<NotesType[]> => {
 };
 
 export const getFavoriteNotes = async () => {
-  return getNotesByFilter("favorite");
+  return getNotesByFilter("isFavorite");
 };
 
 export const getArchiveNotes = async () => {
-  return getNotesByFilter("archived");
+  return getNotesByFilter("isArchived");
 };
-
 export const getSearchNotes = async (title: string) => {
   try {
     const res = await api.get(`/notes?search=${title}&limit=1000`);

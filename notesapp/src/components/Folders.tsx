@@ -48,7 +48,7 @@ const Folders: React.FC<FoldersProps> = ({ folders, onSelectFolder, selectedFold
                 <div className='flex items-center gap-3.5  text-2xl'>
 
               <PiFolderSimpleBold /> 
-              <h2 className='text-sm font-bold'>{folderItem.name}</h2> 
+              <h2 className='text-sm font-bold truncate max-w-[150px]'>{folderItem.name}</h2> 
                 </div>
               
             <button

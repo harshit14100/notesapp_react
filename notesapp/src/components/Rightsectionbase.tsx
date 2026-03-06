@@ -246,7 +246,7 @@ const RightSide = () => {
         /> */}
 
           <motion.input
-          className="text-3xl font-bold text-text-main bg-transparent border-none outline-none w-full"
+          className="text-3xl font-bold text-text-main bg-transparent border-none outline-none w-full "
           value={editTitle}
           onChange={(e) => setEditTitle(e.target.value)}
           onBlur={handleSave}
@@ -342,7 +342,7 @@ const RightSide = () => {
             <h3 className="text-xs font-semibold tracking-wider">Folder</h3>
           </div>
 
-          <div className="text-text-main text-sm underline decoration-border-input underline-offset-4 font-bold">
+          <div className="text-text-main text-sm underline decoration-border-input underline-offset-4 font-bold truncate max-w-[150px]">
             {note.folder?.name}
           </div>
 

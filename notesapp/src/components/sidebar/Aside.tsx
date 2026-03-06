@@ -136,14 +136,14 @@ const Aside: React.FC<AsideProps> = ({
 
           </div>
           <div className="flex flex-col flex-1 overflow-hidden h-87">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center ">
               <h4 className="text-text-dim px-8 text-sm font-bold pt-1">
                 Folders
               </h4>
 
               <div className="px-6">
                 <button
-                  className="cursor-pointer text-2xl"
+                  className="cursor-pointer text-2xl "
                   onClick={() => setShowNewFolder(prev => !prev)}
                 >
                   <PiFolderSimplePlusBold />
@@ -156,7 +156,7 @@ const Aside: React.FC<AsideProps> = ({
                 <NewFolder onFolderCreated={handleFolderCreated} />
               </div>
             )}
-            <div className="flex-1 overflow-y-auto px-4 scrollbar-hide">
+            <div className="flex-1 overflow-y-auto px-4 scrollbar-hide truncate    ">
               <Folders
                 folders={folders}
                 onSelectFolder={onSelectFolder}
