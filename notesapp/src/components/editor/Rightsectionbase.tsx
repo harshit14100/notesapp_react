@@ -1,20 +1,23 @@
 import { useEffect, useState } from "react";
-import { getNoteById } from "../Api/NoteAPI";
+import { getNoteById } from "../../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
-import { TbFileText, TbStar, TbStarFilled } from "react-icons/tb";
+import { TbStar, TbStarFilled } from "react-icons/tb";
 import { MdOutlineUnarchive } from "react-icons/md";
-import { LuHistory } from "react-icons/lu";
-import api from "../Api/API";
-import { useNotes } from "../context/Notescontext";
+// import { LuHistory } from "react-icons/lu";
+import api from "../../Api/API";
+import { useNotes } from "../../context/Notescontext";
 
 import { PiDotsThreeCircle } from "react-icons/pi";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegFolder } from "react-icons/fa";
 import { FiArchive } from "react-icons/fi";
 import { RiDeleteBin7Line } from "react-icons/ri";
-import { DeleteNote } from "../Api/Delete";
+import { DeleteNote } from "../../Api/Delete";
 import { FaChevronDown } from "react-icons/fa";
 import { motion } from "framer-motion";
+import LoadingNoteState from "./LoadingState";
+import EmptyNoteState from "./Emptystate";
+import RestoreNoteState from "./RestoreState";
 
 const RightSide = () => {
 
@@ -195,46 +198,23 @@ const handleRestore = async () => {
     loadNote();
   }, [noteId]);
 
-  if (!noteId || !note) {
-    return (
-      <div className="w-full h-full bg-bg-right flex flex-col items-center justify-center gap-4">
+  if (isLoading) {
+  return <LoadingNoteState />;
+}
 
-        <TbFileText strokeWidth={0.8} size={100} className="text-text-dim" />
-        <h2 className="text-text-main text-2xl font-semibold">
-          Select a note to view
-        </h2>
-        <p className="text-text-muted text-sm text-center px-10">
-          Choose a note from the list on the left to view its contents, or
-          create a <br /> new note to add to your collection.
-        </p>
-      </div>
-    );
-  }
+if (!noteId || !note) {
+  return <EmptyNoteState />;
+}
 
-  if (note.deleted || routeType === "trash") {
-    return (
-      <div className="w-full h-full bg-bg-right flex flex-col items-center justify-center gap-5 px-10">
-        <div className="text-text-dim">
-          <LuHistory size={80} strokeWidth={1} />
-        </div>
-        <h2 className="text-text-main text-2xl font-semibold text-center">
-          Restore "{note.title}"
-        </h2>
-        <p className="text-text-muted text-sm text-center max-w-md leading-relaxed">
-          Don't want to lose this note? It's not too late! Just click the
-          'Restore' button and it will be added back to your list. It's that
-          simple.
-        </p>
-        <button
-          onClick={handleRestore}
-          disabled={isRestoring}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-2.5 rounded-md transition-colors disabled:opacity-60 cursor-pointer"
-        >
-          {isRestoring ? "Restoring..." : "Restore"}
-        </button>
-      </div>
-    );
-  }
+if (note.deleted || routeType === "trash") {
+  return (
+    <RestoreNoteState
+      title={note.title}
+      isRestoring={isRestoring}
+      onRestore={handleRestore}
+    />
+  );
+}
 
   return (
     <div className="w-full h-full bg-bg-right flex flex-col p-[5%] gap-7 transition-colors">

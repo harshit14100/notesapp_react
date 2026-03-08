@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import {getNotesByFolder } from "../Api/NoteAPI";
-import {getRecentNotes,getDeletedNotes, searchbar, getFavoriteNotes, getArchiveNotes} from "../Api/NoteAPI"
-import { RiDeleteBin7Line } from "react-icons/ri";
-import { TbStarFilled } from "react-icons/tb";
-import { deleteNote } from "../Api/NoteAPI";
+import {getNotesByFolder } from "../../Api/NoteAPI";
+import {getRecentNotes,getDeletedNotes, searchbar, getFavoriteNotes, getArchiveNotes} from "../../Api/NoteAPI"
+// import { RiDeleteBin7Line } from "react-icons/ri";
+// import { TbStarFilled } from "react-icons/tb";
+import { deleteNote } from "../../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
-import { useNotes } from "../context/Notescontext";
+import { useNotes } from "../../context/Notescontext";
+import NoteCard from "./Card";
 
 interface Note {
   id: string;
@@ -32,45 +33,50 @@ const Middle = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  const fetchNotes = async () => {
+const fetchNotes = async () => {
+  try {
+    setIsLoading(true);
+    setError("");
+    let data;
 
-    try {
-      setIsLoading(true);
-      setError("");
-      let data;
-
-      if (routeType === "trash") {
-        data = await getDeletedNotes();
-      } 
-      else if (routeType === "favorite") {
-        data = await getFavoriteNotes();
-      }
-
-      else if (routeType === "archive") {
-        data = await getArchiveNotes();
-      }
-      else if (!folderId || folderId === "recent") {
-        data = await getRecentNotes();
-      } 
-      else {
-        const activeFolder = selectedFolderId || folderId;
-        if (activeFolder) {
-          data = await getNotesByFolder(activeFolder, page, limit);
-        } else {
-          data = [];
-        }
-      }
-      if (routeType === "trash" || routeType === "archive" || routeType === "favorite") {
-        setNotes(data || []);
-      } else {
-        setNotes((data || []).filter((note: Note) => !note.deleted && !note.archived));
-      }
-    } catch (err) {
-      setError("Failed to load notes.");
-    } finally {
-      setIsLoading(false);
+    if (routeType === "trash") {
+      data = await getDeletedNotes();
+    } 
+    else if (routeType === "favorite") {
+      data = await getFavoriteNotes();
     }
-  };
+    else if (routeType === "archive") {
+      data = await getArchiveNotes();
+    }
+    else if (!folderId || folderId === "recent") {
+      data = await getRecentNotes();
+    } 
+    else {
+      const activeFolder = selectedFolderId || folderId;
+      if (activeFolder) {
+        data = await getNotesByFolder(activeFolder, page, limit);
+      } else {
+        data = [];
+      }
+    }
+
+    const filtered =
+      routeType === "trash" || routeType === "archive" || routeType === "favorite"
+        ? data || []
+        : (data || []).filter((note: Note) => !note.deleted && !note.archived);
+
+    if (page === 1) {
+      setNotes(filtered);
+    } else {
+      setNotes((prev) => [...prev, ...filtered]);
+    }
+
+  } catch {
+    setError("Failed to load notes.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
   const bottom =
@@ -82,14 +88,13 @@ const Middle = () => {
   }
 };
 
-  useEffect(() => {
+useEffect(() => {
+  fetchNotes()
+  setPage(1);
+}, [selectedFolderId, folderId, routeType, refetchKey]);
 
-    fetchNotes();
-    setSearchResults([]);
-  }, [selectedFolderId, folderId, routeType, refetchKey]);
-
-  useEffect(() => {
-    if (searchQuery.trim().length === 0) {
+useEffect(() => {
+  if (searchQuery.trim().length === 0) {
       setSearchResults([]);
       setIsSearching(false);
       return;
@@ -192,34 +197,13 @@ const Middle = () => {
 
         ) : (
           displayNotes.map((note) => (
-            <div
+            <NoteCard
               key={note.id}
-              onClick={() => handleNoteClick(note.id)}
-              className="w-full p-5 bg-bg-aside border border-border-dark hover:bg-primary-hover/20 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:shadow-red-glow">
-              <div className="flex justify-between items-start gap-2">
-                <h4 className="text-m font-medium text-text-main mb-2 truncate flex-1">
-                  {note.title}
-                </h4>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  {note.favorite && routeType !== "favorite" && (
-                    <TbStarFilled className="text-yellow-400 text-sm" />
-                  )}
-                  {routeType !== "trash" && (
-
-                    <button onClick={(e) => handleDelete(e, note.id)}>
-                      <RiDeleteBin7Line className="text-sm text-text-muted hover:text-xl hover:text-text-delete transition-all" />
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="flex justify-between items-center text-[12px] text-text-muted">
-                <p>{new Date(note.createdAt).toLocaleDateString()}</p>
-                <p className="truncate ml-3.75 opacity-70">
-                  {note.preview?.substring(0, 30) || "No content"}...
-                </p>
-              </div>
-            </div>
-          ))
+              note={note}
+              routeType={routeType}
+              onDelete={handleDelete}
+              onClick={handleNoteClick}/>
+            ))
         )}
       </div>
     </div>

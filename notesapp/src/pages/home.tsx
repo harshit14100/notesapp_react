@@ -1,6 +1,6 @@
 import Aside from "../components/sidebar/Aside";
-import Middle from "../components/Mid";
-import RightSide from "../components/Rightsectionbase";
+import Middle from "../components/middle/Mid";
+import RightSide from "../components/editor/Rightsectionbase";
 import { NotesProvider, useNotes } from "../context/Notescontext";
 import { useNavigate } from "react-router-dom";
 import { getFolders } from "../Api/FolderAPI";
