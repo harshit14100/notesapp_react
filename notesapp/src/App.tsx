@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/home";
 // import Aside from "./components/Aside";
 // import RightSide from "./components/Right"; 
+import { Toaster } from "react-hot-toast";
 
 function App() {
     const router = createBrowserRouter([
@@ -43,6 +44,7 @@ function App() {
   
   
   return (<>
+  <Toaster position="bottom-right" />
     <RouterProvider router={router} /> 
       {/* <Right /> */}
       </>

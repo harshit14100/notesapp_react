@@ -18,6 +18,13 @@ interface Note {
   favorite?: boolean;
 }
 
+
+interface MiddleProps {
+  selectedFolderId: string | null;
+  triggerRefetch: () => void;
+  searchQuery: string;
+}
+
 const Middle = () => {
 
   const [notes, setNotes] = useState<Note[]>([]);
@@ -60,8 +67,7 @@ const fetchNotes = async () => {
       }
     }
 
-    const filtered =
-      routeType === "trash" || routeType === "archive" || routeType === "favorite"
+    const filtered = routeType === "trash" || routeType === "archive" || routeType === "favorite"
         ? data || []
         : (data || []).filter((note: Note) => !note.deleted && !note.archived);
 
@@ -95,27 +101,39 @@ useEffect(() => {
 
 useEffect(() => {
   if (searchQuery.trim().length === 0) {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
+    setSearchResults([]);
+    setIsSearching(false);
+    return;
+  }
 
-    }
-    setIsSearching(true);
-    const delay = setTimeout(async () => {
+  const delay = setTimeout(async () => {
+    try {
+      setIsSearching(true);
 
-      try {
-        const data = await searchbar(searchQuery);
-        const results = data?.notes || data?.data || data || [];
-        setSearchResults(results);
-      } catch {
-        setSearchResults([]);
-      } finally {
-        setIsSearching(false);
+      const data = await searchbar(searchQuery);
+      let results = data?.notes || data?.data || data || [];
+
+      if (routeType === "trash") {
+        results = results.filter((note: Note) => note.deleted);
+      } 
+      else if (routeType === "favorite") {
+        results = results.filter((note: Note) => note.favorite && !note.deleted);
+      } 
+      else if (routeType === "archive") {
+        results = results.filter((note: Note) => note.archived && !note.deleted);
+      } 
+      else {
+        results = results.filter((note: Note) => !note.deleted && !note.archived);
       }
-    }, 400);
-
-    return () => clearTimeout(delay);
-  }, [searchQuery]);
+      setSearchResults(results);
+    } catch {
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, 400);
+  return () => clearTimeout(delay);
+}, [searchQuery, routeType]);
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -142,7 +160,8 @@ useEffect(() => {
     }
   };
 
-  const displayNotes = searchQuery.trim().length > 0 ? searchResults : notes;
+const isSearchActive = searchQuery.trim().length > 0;
+const displayNotes = isSearchActive ? searchResults : notes;
   const sectionTitle =
     routeType === "trash"
       ? "Trash"
@@ -172,17 +191,18 @@ useEffect(() => {
 
         {!isLoading && !error && displayNotes.length === 0 && (
           <p className="text-text-muted text-center mt-10">
-            {routeType === "favorite"
-              ? "No favorite notes yet."
-              : routeType === "trash"
-              ? "Trash is empty."
-              : routeType === "archive"
-              ? "No archived notes."
-              : "No notes found."}
-
-          </p>
+              {isSearchActive
+                ? "No matching notes found."
+                : routeType === "favorite"
+                ? "No favorite notes yet."
+                : routeType === "trash"
+                ? "Trash is empty."
+                : routeType === "archive"
+                ? "No archived notes."
+                : "No notes found."}
+            </p>
         )}
-        {isLoading ? (
+        {isLoading || isSearching ? (
           skeletonArray.map((item) => (
             <div
               key={item}

@@ -5,6 +5,7 @@ import { TbStar, TbStarFilled } from "react-icons/tb";
 import { MdOutlineUnarchive } from "react-icons/md";
 // import { LuHistory } from "react-icons/lu";
 import api from "../../Api/API";
+import toast from "react-hot-toast";
 import { useNotes } from "../../context/Notescontext";
 
 import { PiDotsThreeCircle } from "react-icons/pi";
@@ -34,54 +35,62 @@ const RightSide = () => {
   const [note, setNote] = useState<any>(null);
   const { triggerRefetch, folders } = useNotes();
 
-  const handleFavorite = async (e: React.MouseEvent) => {
-
+ const handleFavorite = async (e: React.MouseEvent) => {
   e.stopPropagation();
   if (!noteId || !note) return;
-  const newFavoriteValue = !note.favorite;
 
+  const newValue = !note.favorite;
   try {
     await api.patch(`/notes/${noteId}`, {
-      favorite: newFavoriteValue
+      favorite: newValue,
     });
 
     setNote((prev: any) => ({
       ...prev,
-      favorite: newFavoriteValue,
+      favorite: newValue,
     }));
     triggerRefetch();
-
-    if (routeType === "favorite" && !newFavoriteValue) {
+    toast.success(
+      newValue ? "Added to favorites " : "Removed from favorites"
+    );
+    if (routeType === "favorite" && !newValue) {
       navigate("/type/favorite");
     }
-
-  } catch (err) {
-    console.log(err);
+  } catch {
+    toast.error("Failed to update favorite");
   }
 };
 
-  const handleArchive = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+const handleArchive = async (e: React.MouseEvent) => {
+  e.stopPropagation();
 
-    if (!noteId || !note) return;
-    const newArchivedValue = !note.archived;
-    const folderId = note?.folder?.id;
-    setOverlay(false);
+  if (!noteId || !note) return;
+  const newValue = !note.archived;
+  const folderId = note?.folder?.id;
 
-    try {
-      await api.patch(`/notes/${noteId}`, { archived: newArchivedValue });
-      setNote(null);
-      triggerRefetch();
+  setOverlay(false);
+  try {
+    await api.patch(`/notes/${noteId}`, {
+      archived: newValue,
+    });
+    setNote((prev: any) => ({
+      ...prev,
+      archived: newValue,
+    }));
 
-      if (folderId) {
-        navigate(`/notes/${folderId}`);
-      } else {
-        navigate(`/notes/recent`);
-      }
-    } catch (err) {
-      // silent
+    triggerRefetch();
+    toast.success(
+      newValue ? "Note archived " : "Note unarchived"
+    );
+    if (newValue) {
+      navigate("/type/archive");
+    } else {
+      navigate(`/notes/${folderId || "recent"}`);
     }
-  };
+  } catch {
+    toast.error("Failed to archive note");
+  }
+};
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -106,22 +115,23 @@ const RightSide = () => {
   };
 
 const handleRestore = async () => {
+  if (!noteId || !note) return;
+
+  setIsRestoring(true);
   try {
-    setIsRestoring(true);
-
     await api.patch(`/notes/${noteId}`, {
-      deleted: false,
-      archived: false,
+      deletedAt: null,
     });
-
     triggerRefetch();
 
     const folderId = note?.folder?.id;
-
-    navigate(`/notes/${folderId || "recent"}`);
-
-  } catch (err) {
-    console.log(err);
+    if (folderId) {
+      navigate(`/notes/${folderId}/${noteId}`);
+    } else {
+      navigate(`/type/recent/${noteId}`);
+    }
+  } catch (error) {
+    console.error("Restore failed", error);
   } finally {
     setIsRestoring(false);
   }
@@ -211,8 +221,7 @@ if (note.deleted || routeType === "trash") {
     <RestoreNoteState
       title={note.title}
       isRestoring={isRestoring}
-      onRestore={handleRestore}
-    />
+      onRestore={handleRestore}/>
   );
 }
 

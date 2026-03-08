@@ -11,7 +11,8 @@ const EmptyNoteState = () => {
 
       <p className="text-text-muted text-sm text-center px-10">
         Choose a note from the list on the left to view its contents, or
-        create a new note to add to your collection.
+        create a <br />
+         new note to add to your collection.
       </p>
     </div>
   );
