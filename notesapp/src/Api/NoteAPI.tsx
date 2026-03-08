@@ -78,9 +78,9 @@ export const getFavoriteNotes = async () => {
 export const getArchiveNotes = async () => {
   return getNotesByFilter("isArchived");
 };
-export const getSearchNotes = async (title: string) => {
+export const searchNotes = async (title: string) => {
   try {
-    const res = await api.get(`/notes?search=${title}&limit=1000`);
+    const res = await api.get(`/notes?search=${title}&limit=10`);
     return res.data.notes || [];
   } catch (e) {
     if (e instanceof Error) console.log(e.message);
@@ -141,5 +141,13 @@ export const archiveNote = async (id: string, value: boolean) => {
 
 export const moveNote = async (noteId: string, folderId: string) => {
   return patchNote(noteId, { folderId });
+};
+
+
+
+
+export const searchbar = async (query: string) => {
+  const res = await api.get(`/notes?q=${query}`);
+  return res.data;
 };
 

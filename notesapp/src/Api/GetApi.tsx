@@ -10,10 +10,6 @@ export const getRecentNotes = async () => {
   return res.data.recentNotes;
 };
 
-export const getNotesByFolder = async (folderId: string) => {
-  const res = await api.get("/notes", { params: { folderId, deleted: false } });
-  return res.data.notes;
-};
 
 export const getNoteById = async (id: string) => {
   const res = await api.get(`/notes/${id}`);
@@ -29,7 +25,7 @@ export const searchbar = async (query: string) => {
 
 export const getDeletedNotes = async () => {
   try {
-    const res = await api.get(`/notes?deleted=true&limit=10`);
+    const res = await api.get(`/notes?deleted=true&limit=1000`);
     return res.data.notes;
   } catch (e) {
     if (e instanceof Error){

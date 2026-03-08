@@ -13,6 +13,8 @@ export const deleteFolder = async (id: string): Promise<boolean> => {
   }
 };
 
+
+
 export const getFolders = async (): Promise<Folder[]> => {
   try {
     const res = await api.get("/folders");

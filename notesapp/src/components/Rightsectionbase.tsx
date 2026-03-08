@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getNoteById } from "../Api/GetApi";
+import { getNoteById } from "../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
 import { TbFileText, TbStar, TbStarFilled } from "react-icons/tb";
 import { MdOutlineUnarchive } from "react-icons/md";
@@ -102,25 +102,27 @@ const RightSide = () => {
     }
   };
 
-  const handleRestore = async () => {
-    try {
+const handleRestore = async () => {
+  try {
+    setIsRestoring(true);
 
-      setIsRestoring(true);
-      await api.patch(`/notes/${noteId}`, { deleted: false, archived: false });
-      triggerRefetch();
-      const folderId = note?.folder?.id;
+    await api.patch(`/notes/${noteId}`, {
+      deleted: false,
+      archived: false,
+    });
 
-      if (folderId) {
-        navigate(`/notes/${folderId}`);
-      } else {
-        navigate(`/notes/recent`);
-      }
-    } catch (err) {
-      // silent
-    } finally {
-      setIsRestoring(false);
-    }
-  };
+    triggerRefetch();
+
+    const folderId = note?.folder?.id;
+
+    navigate(`/notes/${folderId || "recent"}`);
+
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setIsRestoring(false);
+  }
+};
 
    const handleMoveNote = async (newFolderId: string, newFolderName: string) => {
     if (!note) return;

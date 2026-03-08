@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { getRecentNotes, getNotesByFolder, getDeletedNotes, getFavoriteNotes, getArchiveNotes, searchbar } from "../Api/GetApi";
+import {getNotesByFolder } from "../Api/NoteAPI";
+import {getRecentNotes,getDeletedNotes, searchbar, getFavoriteNotes, getArchiveNotes} from "../Api/NoteAPI"
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { TbStarFilled } from "react-icons/tb";
-import { DeleteNote } from "../Api/Delete";
+import { deleteNote } from "../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotes } from "../context/Notescontext";
 
@@ -27,7 +28,10 @@ const Middle = () => {
   const { folderId, type: routeType } = useParams();
   const navigate = useNavigate();
   const { selectedFolderId, selectedFolderName, refetchKey, triggerRefetch, searchQuery } = useNotes();
-  const skeletonArray = [1,2,3,4,5]; // FIX: missing variable
+  const skeletonArray = [1,2,3,4,5]; 
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
   const fetchNotes = async () => {
 
     try {
@@ -39,20 +43,19 @@ const Middle = () => {
         data = await getDeletedNotes();
       } 
       else if (routeType === "favorite") {
-        const fav = await getFavoriteNotes();
-        data = (fav || []).filter((note: Note) => !note.deleted && !note.archived);
-      } 
+        data = await getFavoriteNotes();
+      }
+
       else if (routeType === "archive") {
-        const arch = await getArchiveNotes();
-        data = (arch || []).filter((note: Note) => !note.deleted);
-      } 
+        data = await getArchiveNotes();
+      }
       else if (!folderId || folderId === "recent") {
         data = await getRecentNotes();
       } 
       else {
         const activeFolder = selectedFolderId || folderId;
         if (activeFolder) {
-          data = await getNotesByFolder(activeFolder);
+          data = await getNotesByFolder(activeFolder, page, limit);
         } else {
           data = [];
         }
@@ -68,6 +71,16 @@ const Middle = () => {
       setIsLoading(false);
     }
   };
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+  const bottom =
+    e.currentTarget.scrollHeight - e.currentTarget.scrollTop ===
+    e.currentTarget.clientHeight;
+
+  if (bottom) {
+    setPage(prev => prev + 1);
+  }
+};
 
   useEffect(() => {
 
@@ -105,7 +118,7 @@ const Middle = () => {
     setNotes(prev => prev.filter(note => note.id !== id));
     setSearchResults(prev => prev.filter(note => note.id !== id));
 
-    const success = await DeleteNote(id);
+    const success = await deleteNote(id);
     if (success) {
       fetchNotes();
       triggerRefetch();
@@ -144,7 +157,7 @@ const Middle = () => {
           )}
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3.75 pb-7.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3.75 pb-7.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" onScroll={handleScroll}>
 
         {error && (
           <div className="p-4 bg-text-delete/10 border border-text-delete/50 rounded text-text-delete">
