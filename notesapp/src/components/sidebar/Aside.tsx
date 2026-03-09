@@ -9,13 +9,14 @@ import React, { useEffect, useState } from "react";
 // import { PiFolderSimplePlusBold } from "react-icons/pi";
 // import { GoSun, GoMoon } from "react-icons/go";
 
+import { useNavigate } from "react-router-dom";
 import type { Folder } from "../../types/types";
 // import AddNote from "../NewNote";
 // import Recentnotes from "../Recentnotes";
 // import Folders from "../Folders";
 // import NewFolder from "../NewFolder";
 import { getFolders } from "../../Api/FolderAPI";
-import { searchNotes } from "../../Api/NoteAPI";
+import { createNote, searchNotes } from "../../Api/NoteAPI";
 import "../../App.css";
 // import { NavLink } from "react-router-dom";
 import type { NotesType } from "../../types/types";
@@ -23,6 +24,7 @@ import { useNotes } from "../../context/Notescontext";
 import AsideHeader from "./AsideHeader";
 import AsideFolders from "./AsideFolders";
 import AsideMore from "./AsideMore";
+import toast from "react-hot-toast";
 
 interface AsideProps {
   onSelectFolder: (id: string, name: string) => void;
@@ -63,6 +65,28 @@ const Aside: React.FC<AsideProps> = ({
       setFolders([]);
     }
   };
+
+
+const handleNewNote = async () => {
+
+  if (!selectedFolderId) {
+    toast.error("Select a folder first!");
+    return;
+  }
+
+  try {
+
+    const newNote = await createNote(selectedFolderId, "Untitled", "");
+
+    triggerRefetch();
+
+    navigate(`/notes/${selectedFolderId}/${newNote.id}`);
+
+  } catch (e) {
+    console.error(e);
+    toast.error("Failed to create note");
+  }
+};
 
   useEffect(() => {
     fetchFolders();

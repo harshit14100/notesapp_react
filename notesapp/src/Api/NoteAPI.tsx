@@ -93,9 +93,10 @@ export const createNote = async (
   folderId: string,
   title: string,
   content: string,
+  date: Date,
 ) => {
   try {
-    const res = await api.post("/notes", { folderId, title, content });
+    const res = await api.post("/notes", { folderId, title, content, date });
     return res.data;
   } catch (e) {
     if (e instanceof Error) return e.message;
