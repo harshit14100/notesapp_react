@@ -57,7 +57,7 @@ const RightSide = () => {
 
   const newValue = !note.favorite;
   try {
-    await api.patch(`/notes/${noteId}`, {
+    await api.patch(`/${noteId}`, {
       favorite: newValue,
     });
 
@@ -90,7 +90,7 @@ const handleArchive = async (e: React.MouseEvent) => {
 
   setOverlay(false);
   try {
-    await api.patch(`/notes/${noteId}`, {
+    await api.patch(`/${noteId}`, {
       archived: newValue,
     });
     setNote((prev) => {
@@ -108,7 +108,7 @@ const handleArchive = async (e: React.MouseEvent) => {
     if (newValue) {
       navigate("/type/archive");
     } else {
-      navigate(`/notes/notes/${folderId || "recent"}`);
+      navigate(`/${folderId || "recent"}`);
     }
   } catch {
     toast.error("Failed to archive note");
@@ -128,9 +128,9 @@ const handleArchive = async (e: React.MouseEvent) => {
       triggerRefetch();
 
       if (folderId) {
-        navigate(`/notes/notes/${folderId}`);
+        navigate(`/${folderId}`);
       } else {
-        navigate(`/notes/notes/recent`);
+        navigate(`/recent`);
       }
     } catch (err) {
       // silent
@@ -142,16 +142,16 @@ const handleRestore = async () => {
 
   setIsRestoring(true);
   try {
-    await api.patch(`/notes/${noteId}`, {
+    await api.patch(`/${noteId}`, {
       deletedAt: null,
     });
     triggerRefetch();
 
     const folderId = note?.folder?.id;
     if (folderId) {
-      navigate(`/notes/notes/${folderId}/${noteId}`);
+      navigate(`/${folderId}/${noteId}`);
     } else {
-      navigate(`/notes/type/recent/${noteId}`);
+      navigate(`/type/recent/${noteId}`);
     }
   } catch (error) {
     console.error("Restore failed", error);
@@ -163,7 +163,7 @@ const handleRestore = async () => {
   const handleMoveNote = async (newFolderId: string, newFolderName: string) => {
   if (!note || note.folder?.id === newFolderId) return;
   try {
-    await api.patch(`/notes/${note.id}`, { folderId: newFolderId });
+    await api.patch(`/${note.id}`, { folderId: newFolderId });
     setNote((prev) => {
       if (!prev) return prev;
       return {
@@ -177,7 +177,7 @@ const handleRestore = async () => {
 
     setfolderDropdown(false);
     triggerRefetch();
-    navigate(`/notes/${newFolderId}/${note.id}`);
+    navigate(`/${newFolderId}/${note.id}`);
     toast.success(`Moved to ${newFolderName}`);
   } catch {
     toast.error("Failed to move note");
@@ -198,7 +198,7 @@ const handleRestore = async () => {
     try {
       setIsSaving(true);
 
-      const updated = await api.patch(`/notes/${noteId}`, {
+      const updated = await api.patch(`/${noteId}`, {
         title: editTitle,
         content: editContent,
       });

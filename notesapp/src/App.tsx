@@ -16,15 +16,15 @@ function App() {
     element: <Home />,
   },
   {
-    path: "/notes/recent/:noteId",
+    path: "/recent/:noteId",
     element: <Home />,
   },
   {
-    path: "/notes/:folderId",
+    path: "/:folderId",
     element: <Home />,
   },
   {
-    path: "/notes/:folderId/:noteId",
+    path: "/:folderId/:noteId",
     element: <Home />,
   },
   {

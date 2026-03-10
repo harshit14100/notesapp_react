@@ -14,7 +14,7 @@ const HomeLayout = () => {
 
   const handleSelectFolder = (id: string, name: string) => {
     setSelectedFolder(id, name);
-    navigate(`/notes/${id}`)
+    navigate(`/${id}`)
   };
 
   const [folders, setFolders] = useState<Folder[]>([]);

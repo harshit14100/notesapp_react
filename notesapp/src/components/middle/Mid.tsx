@@ -161,7 +161,7 @@ useEffect(() => {
       navigate(`/type/${routeType}/${id}`);
     } else {
       const activeFolder = selectedFolderId || folderId || "recent";
-      navigate(`/notes/${activeFolder}/${id}`);
+      navigate(`/${activeFolder}/${id}`);
     }
   };
 
