@@ -45,6 +45,7 @@ const RightSide = () => {
       favorite: newValue,
     });
 
+
     setNote((prev: any) => ({
       ...prev,
       favorite: newValue,
@@ -85,7 +86,7 @@ const handleArchive = async (e: React.MouseEvent) => {
     if (newValue) {
       navigate("/type/archive");
     } else {
-      navigate(`/notes/${folderId || "recent"}`);
+      navigate(`/notes/notes/${folderId || "recent"}`);
     }
   } catch {
     toast.error("Failed to archive note");
@@ -105,9 +106,9 @@ const handleArchive = async (e: React.MouseEvent) => {
       triggerRefetch();
 
       if (folderId) {
-        navigate(`/notes/${folderId}`);
+        navigate(`/notes/notes/${folderId}`);
       } else {
-        navigate(`/notes/recent`);
+        navigate(`/notes/notes/recent`);
       }
     } catch (err) {
       // silent
@@ -126,9 +127,9 @@ const handleRestore = async () => {
 
     const folderId = note?.folder?.id;
     if (folderId) {
-      navigate(`/notes/${folderId}/${noteId}`);
+      navigate(`/notes/notes/${folderId}/${noteId}`);
     } else {
-      navigate(`/type/recent/${noteId}`);
+      navigate(`/notes/type/recent/${noteId}`);
     }
   } catch (error) {
     console.error("Restore failed", error);
@@ -137,21 +138,34 @@ const handleRestore = async () => {
   }
 };
 
-   const handleMoveNote = async (newFolderId: string, newFolderName: string) => {
-    if (!note) return;
-    try {
-      await api.patch(`/notes/${note.id}`, { folderId: newFolderId });
-      setNote({
-        ...note,
-        folderId: newFolderId,
-        folder: { name: newFolderName },
-      });
-      setfolderDropdown(false);
-      navigate(`/${newFolderId}/${note.id}`);
-    } catch (e) {
-      if (e instanceof Error) console.log(e.message);
-    }
-  };
+  const handleMoveNote = async (newFolderId: string, newFolderName: string) => {
+  if (!note || note.folder?.id === newFolderId) return;
+  try {
+    await api.patch(`/notes/${note.id}`, { folderId: newFolderId });
+    setNote((prev: any) => ({
+      ...prev,
+      folder: {
+        ...prev.folder,
+        id: newFolderId,
+        name: newFolderName,
+      },
+    }));
+
+    setfolderDropdown(false);
+    triggerRefetch();
+    navigate(`/notes/${newFolderId}/${note.id}`);
+    toast.success(`Moved to ${newFolderName}`);
+  } catch {
+    toast.error("Failed to move note");
+  }
+};
+
+  useEffect(() => {
+    const closeDropdown = () => setfolderDropdown(false);
+    window.addEventListener("click", closeDropdown);
+
+    return () => window.removeEventListener("click", closeDropdown);
+  }, []);
 
   const handleSave = async () => {
     if (!noteId || !note) return;
@@ -194,7 +208,7 @@ const handleRestore = async () => {
       try {
         setIsLoading(true);
         const res = await getNoteById(noteId);
-        const noteData = res?.data || res;
+        const noteData = res;
         setNote(noteData);
 
         setEditTitle(noteData?.title || "");
@@ -338,36 +352,37 @@ if (note.deleted || routeType === "trash") {
           </div>
 
           <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setfolderDropdown((prev) => !prev);
-                setOverlay(false);
-              }}
-              className="text-dim hover:text-text cursor-pointer"
-            >
+            onClick={(e) => {
+              e.stopPropagation();
+              setfolderDropdown((prev) => !prev);
+              setOverlay(false);
+            }}
+            className="text-text-muted hover:text-text-main cursor-pointer">
               <FaChevronDown  size={16} />
             </button>
 
           {folderDropdown && (
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="absolute top-10 left-32 bg-overlay rounded-md p-2 w-48 flex flex-col gap-1 z-50 shadow-lg max-h-60 overflow-y-auto hide-scrollbar"
-            >
-              {folders?.map((f: any) => (
-                <button
-                  key={f.id}
-                  onClick={() => handleMoveNote(f.id, f.name)}
-                  className={`text-sm text-left px-3 py-2 rounded cursor-pointer hover:bg-secondary-hover
-                    ${note.folder?.name === f.name ? "text-primary font-semibold" : "text-text"}`}
-                >
-                  {f.name}
-                </button>
-              ))}
-            </div>
-          )}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="absolute top-10 left-0 bg-bg-popover rounded-md p-2 w-52 flex flex-col gap-1 z-50 shadow-lg max-h-60 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] truncate">
 
+            {folders?.map((f: any) => (
+              <button
+                key={f.id}
+                disabled={note.folder?.id === f.id}
+                onClick={() => handleMoveNote(f.id, f.name)}
+                className={`text-sm text-left px-3 py-2 rounded cursor-pointer transition
+                ${
+                  note.folder?.id === f.id
+                    ? "text-primary font-semibold cursor-default"
+                    : "hover:bg-primary-hover"
+                }`}>
+                {f.name}
+              </button>
+            ))}
+          </div>
+        )}
         </div>
-
       </div>
 
       {isSaving && (

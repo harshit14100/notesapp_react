@@ -9,39 +9,41 @@ import React, { useEffect, useState } from "react";
 // import { PiFolderSimplePlusBold } from "react-icons/pi";
 // import { GoSun, GoMoon } from "react-icons/go";
 
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import type { Folder } from "../../types/types";
 // import AddNote from "../NewNote";
 // import Recentnotes from "../Recentnotes";
 // import Folders from "../Folders";
 // import NewFolder from "../NewFolder";
 import { getFolders } from "../../Api/FolderAPI";
-import { createNote, searchNotes } from "../../Api/NoteAPI";
+// import { createNote} from "../../Api/NoteAPI";
 import "../../App.css";
 // import { NavLink } from "react-router-dom";
-import type { NotesType } from "../../types/types";
+// import type { NotesType } from "../../types/types";
 import { useNotes } from "../../context/Notescontext";
 import AsideHeader from "./AsideHeader";
 import AsideFolders from "./AsideFolders";
 import AsideMore from "./AsideMore";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 
 interface AsideProps {
+  folders: Folder[];
+  selectedFolderId: string | null;
   onSelectFolder: (id: string, name: string) => void;
   onClearFolder: () => void;
-  selectedFolderId: string | null;
 }
 
 // interface Folder {
-//   id: string;
-//   name: string;
-// }
+  //   id: string;
+  //   name: string;
+  // }
 
 const Aside: React.FC<AsideProps> = ({
   onSelectFolder,
   onClearFolder,
   selectedFolderId,
 }) => {
+  // const navigate = useNavigate();
 
   const {
     searchQuery,
@@ -50,71 +52,53 @@ const Aside: React.FC<AsideProps> = ({
     toggleTheme,
     triggerRefetch,
     selectedFolderName,
-    refetchKey
+    refetchKey,
+    setFolders: setContextFolders 
   } = useNotes();
 
   const [folders, setFolders] = useState<Folder[]>([]);
-  const [searchResults, setSearchResults] = useState<NotesType[]>([]);
   const [showNewFolder, setShowNewFolder] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
 
   const fetchFolders = async () => {
     try {
       const data = await getFolders();
       setFolders(data);
+      setContextFolders(data); 
     } catch {
       setFolders([]);
+      setContextFolders([]); 
     }
   };
 
 
-const handleNewNote = async () => {
+// const handleNewNote = async () => {
+//   if (!selectedFolderId) {
+//     toast.error("Select a folder first!");
+//     return;
+//   }
+//   try {
+//     const newNote = await createNote(selectedFolderId,"Untitled","",new Date());
 
-  if (!selectedFolderId) {
-    toast.error("Select a folder first!");
-    return;
-  }
-
-  try {
-
-    const newNote = await createNote(selectedFolderId, "Untitled", "");
-
-    triggerRefetch();
-
-    navigate(`/notes/${selectedFolderId}/${newNote.id}`);
-
-  } catch (e) {
-    console.error(e);
-    toast.error("Failed to create note");
-  }
-};
+//     triggerRefetch();
+//     navigate(`/notes/${selectedFolderId}/${newNote.id}`);
+//   } catch (e) {
+//     console.error(e);
+//     toast.error("Failed to create note");
+//   }
+// };
 
   useEffect(() => {
     fetchFolders();
   }, [refetchKey]);
 
-  useEffect(() => {
-    const fetchSearch = async () => {
-      if (!searchQuery) {
-        setSearchResults([]);
-        return;
-      }
-
-      try {
-        const res = await searchNotes(searchQuery);
-        setSearchResults(res);
-      } catch {
-        setSearchResults([]);
-      }
-    };
-
-    fetchSearch();
-  }, [searchQuery]);
 
   const handleFolderCreated = (newFolder: { folder: Folder }) => {
     const folder: Folder = newFolder?.folder || newFolder;
 
     if (folder?.id && folder?.name) {
       setFolders((prev) => [...prev, folder]);
+      setContextFolders((prev: Folder[]) => [...prev, folder]); 
       onSelectFolder(folder.id, folder.name);
       triggerRefetch();
     }
@@ -131,15 +115,15 @@ const handleNewNote = async () => {
           <AsideHeader
             isDarkMode={isDarkMode}
             toggleTheme={toggleTheme}
+            handleSearch={() => setShowSearch(prev => !prev)}
+            showSearch={showSearch}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             selectedFolderId={selectedFolderId}
-            triggerRefetch={triggerRefetch}
-          />
+            triggerRefetch={triggerRefetch}/>
 
           <AsideFolders
             searchQuery={searchQuery}
-            searchResults={searchResults}
             showNewFolder={showNewFolder}
             setShowNewFolder={setShowNewFolder}
             handleFolderCreated={handleFolderCreated}
@@ -161,4 +145,4 @@ const handleNewNote = async () => {
   )
 }
 
-export default Aside
+export default Aside;

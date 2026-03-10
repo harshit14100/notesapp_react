@@ -13,20 +13,27 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
   const navigate = useNavigate();
 
   const handleNewNote = async () => {
-    if (!folderId) {
-      toast.error("Folder not selected");
-      return;
-    }
-    try {
-      const newNote = await createNote(folderId, "Untitled", "" , date);
-      onNoteAdded?.();
-      navigate(`/notes/${folderId}/${newNote.id}`);
-      toast.success("New note created");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to create note");
-    }
-  };
+  if (!folderId) {
+    toast.error("Folder not selected");
+    return;
+  }
+
+  try {
+    const createdAt = new Date()
+    const newNote = await createNote(folderId, "Untitled", "", createdAt);
+    const noteWithDate = {
+      ...newNote,
+      createdAt
+    };
+    onNoteAdded?.();
+    navigate(`/notes/${folderId}/${noteWithDate.id}`);
+    toast.success("New note created");
+  }
+   catch (err) {
+    console.error(err);
+    toast.error("Failed to create note");
+  }
+};
 
   return (
     <button

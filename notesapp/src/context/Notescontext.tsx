@@ -1,9 +1,13 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import type { Folder } from "../types/types";
+import Folders from "../components/Folders";
 
 interface NotesContextType {
   refetchKey: number;
   triggerRefetch: () => void;
+  folders: Folder[];
+  setFolders: (folders: Folder[]) => void;
   selectedFolderId: string | null;
   selectedFolderName: string | null;
   setSelectedFolder: (id: string, name: string) => void;
@@ -22,6 +26,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [selectedFolderName, setSelectedFolderName] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
+const [folders, setFolders] = useState<Folder[]>([]);
   
 
   useEffect(() => {
@@ -54,6 +59,8 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
       value={{
         refetchKey,
         triggerRefetch,
+        folders,
+        setFolders,
         selectedFolderName,
         selectedFolderId,
         setSelectedFolder,
@@ -62,8 +69,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
         setSearchQuery,
         isDarkMode,
         toggleTheme,
-      }}
-    >
+      }}>
       {children}
     </NotesContext.Provider>
   );

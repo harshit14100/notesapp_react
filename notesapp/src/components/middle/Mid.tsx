@@ -7,23 +7,19 @@ import { deleteNote } from "../../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotes } from "../../context/Notescontext";
 import NoteCard from "./Card";
+// import { useNotes } from "../../context/Notescontext";
 
 interface Note {
   id: string;
   title: string;
   preview?: string;
   createdAt: string;
+  folderId?: string;
   deleted?: boolean;
   archived?: boolean;
   favorite?: boolean;
 }
 
-
-interface MiddleProps {
-  selectedFolderId: string | null;
-  triggerRefetch: () => void;
-  searchQuery: string;
-}
 
 const Middle = () => {
 
@@ -44,7 +40,7 @@ const fetchNotes = async () => {
   try {
     setIsLoading(true);
     setError("");
-    let data;
+    let data: any[] = [];
 
     if (routeType === "trash") {
       data = await getDeletedNotes();
@@ -61,7 +57,7 @@ const fetchNotes = async () => {
     else {
       const activeFolder = selectedFolderId || folderId;
       if (activeFolder) {
-        data = await getNotesByFolder(activeFolder, page, limit);
+        data = await getNotesByFolder(activeFolder);
       } else {
         data = [];
       }
@@ -100,7 +96,7 @@ useEffect(() => {
 }, [selectedFolderId, folderId, routeType, refetchKey]);
 
 useEffect(() => {
-  if (searchQuery.trim().length === 0) {
+  if (!searchQuery.trim()) {
     setSearchResults([]);
     setIsSearching(false);
     return;
@@ -109,31 +105,40 @@ useEffect(() => {
   const delay = setTimeout(async () => {
     try {
       setIsSearching(true);
-
       const data = await searchbar(searchQuery);
-      let results = data?.notes || data?.data || data || [];
+
+      let results: Note[] = Array.isArray(data)
+        ? data
+        : data?.notes || data?.data || [];
+
+      const activeFolder = selectedFolderId || folderId;
 
       if (routeType === "trash") {
-        results = results.filter((note: Note) => note.deleted);
+        results = results.filter((note) => note.deleted);
       } 
       else if (routeType === "favorite") {
-        results = results.filter((note: Note) => note.favorite && !note.deleted);
+        results = results.filter((note) => note.favorite && !note.deleted);
       } 
       else if (routeType === "archive") {
-        results = results.filter((note: Note) => note.archived && !note.deleted);
+        results = results.filter((note) => note.archived && !note.deleted);
       } 
       else {
-        results = results.filter((note: Note) => !note.deleted && !note.archived);
+        results = results.filter((note) => !note.deleted && !note.archived);
+        if (activeFolder && activeFolder !== "recent") {
+          results = results.filter((note: any) => note.folderId === activeFolder);
+        }
       }
       setSearchResults(results);
-    } catch {
+    } catch (err) {
+      console.error("Search failed:", err);
       setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
   }, 400);
+
   return () => clearTimeout(delay);
-}, [searchQuery, routeType]);
+}, [searchQuery, routeType, selectedFolderId, folderId]);
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
