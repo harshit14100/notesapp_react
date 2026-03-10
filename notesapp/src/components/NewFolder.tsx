@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { createFolder } from "../Api/PostApi"; 
 
+import type { Folder } from "../types/types";
+
 interface Props {
-  onFolderCreated: (folder: string) => void;
+  onFolderCreated: (folder: Folder) => void;
 }
 
 const NewFolder= ({ onFolderCreated }: Props)=> {

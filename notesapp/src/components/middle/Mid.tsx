@@ -34,7 +34,7 @@ const Middle = () => {
   const { selectedFolderId, selectedFolderName, refetchKey, triggerRefetch, searchQuery } = useNotes();
   const skeletonArray = [1,2,3,4,5]; 
   const [page, setPage] = useState(1);
-  const limit = 10;
+  // const limit = 10;
 
 const fetchNotes = async () => {
   try {

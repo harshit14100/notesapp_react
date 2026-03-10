@@ -20,6 +20,22 @@ import LoadingNoteState from "./LoadingState";
 import EmptyNoteState from "./Emptystate";
 import RestoreNoteState from "./RestoreState";
 
+interface Folder {
+  id: string;
+  name: string;
+}
+
+interface Note {
+  id: string;
+  title: string;
+  content: string;
+  favorite?: boolean;
+  archived?: boolean;
+  deleted?: boolean;
+  createdAt: string;
+  folder?: Folder;
+}
+
 const RightSide = () => {
 
   const [overlay, setOverlay] = useState<boolean>(false);
@@ -32,7 +48,7 @@ const RightSide = () => {
 
   const { noteId, type: routeType } = useParams();
   const navigate = useNavigate();
-  const [note, setNote] = useState<any>(null);
+  const [note, setNote] = useState<Note | null>(null);
   const { triggerRefetch, folders } = useNotes();
 
  const handleFavorite = async (e: React.MouseEvent) => {
@@ -46,10 +62,13 @@ const RightSide = () => {
     });
 
 
-    setNote((prev: any) => ({
-      ...prev,
-      favorite: newValue,
-    }));
+    setNote((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        favorite: newValue,
+      };
+    });
     triggerRefetch();
     toast.success(
       newValue ? "Added to favorites " : "Removed from favorites"
@@ -74,10 +93,13 @@ const handleArchive = async (e: React.MouseEvent) => {
     await api.patch(`/notes/${noteId}`, {
       archived: newValue,
     });
-    setNote((prev: any) => ({
-      ...prev,
-      archived: newValue,
-    }));
+    setNote((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        archived: newValue,
+      };
+    });
 
     triggerRefetch();
     toast.success(
@@ -142,14 +164,16 @@ const handleRestore = async () => {
   if (!note || note.folder?.id === newFolderId) return;
   try {
     await api.patch(`/notes/${note.id}`, { folderId: newFolderId });
-    setNote((prev: any) => ({
-      ...prev,
-      folder: {
-        ...prev.folder,
-        id: newFolderId,
-        name: newFolderName,
-      },
-    }));
+    setNote((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        folder: {
+          id: newFolderId,
+          name: newFolderName,
+        },
+      };
+    });
 
     setfolderDropdown(false);
     triggerRefetch();
@@ -200,25 +224,32 @@ const handleRestore = async () => {
   useEffect(() => {
 
     const loadNote = async () => {
-      if (!noteId || noteId === "recent") {
-        setNote(null);
-        return;
-      }
+  if (!noteId || noteId === "recent") {
+    setNote(null);
+    return;
+  }
 
-      try {
-        setIsLoading(true);
-        const res = await getNoteById(noteId);
-        const noteData = res;
-        setNote(noteData);
+  try {
+    setIsLoading(true);
 
-        setEditTitle(noteData?.title || "");
-        setEditContent(noteData?.content || "");
-      } catch (err) {
-        // silent
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    const res = await getNoteById(noteId);
+    const noteData = res as Note | null;
+
+    if (!noteData) {
+      setNote(null);
+      return;
+    }
+
+    setNote(noteData);
+    setEditTitle(noteData.title || "");
+    setEditContent(noteData.content || "");
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setIsLoading(false);
+  }
+};
     loadNote();
   }, [noteId]);
 
@@ -366,7 +397,7 @@ if (note.deleted || routeType === "trash") {
             onClick={(e) => e.stopPropagation()}
             className="absolute top-10 left-0 bg-bg-popover rounded-md p-2 w-52 flex flex-col gap-1 z-50 shadow-lg max-h-60 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] truncate">
 
-            {folders?.map((f: any) => (
+            {folders?.map((f: Folder) => (
               <button
                 key={f.id}
                 disabled={note.folder?.id === f.id}

@@ -1,13 +1,13 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { Folder } from "../types/types";
-import Folders from "../components/Folders";
+// import Folders from "../components/Folders";
 
 interface NotesContextType {
   refetchKey: number;
   triggerRefetch: () => void;
   folders: Folder[];
-  setFolders: (folders: Folder[]) => void;
+  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
   selectedFolderId: string | null;
   selectedFolderName: string | null;
   setSelectedFolder: (id: string, name: string) => void;

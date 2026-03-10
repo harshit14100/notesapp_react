@@ -24,6 +24,7 @@ import { useNotes } from "../../context/Notescontext";
 import AsideHeader from "./AsideHeader";
 import AsideFolders from "./AsideFolders";
 import AsideMore from "./AsideMore";
+import type { NotesType } from "../../types/types";
 // import toast from "react-hot-toast";
 
 interface AsideProps {
@@ -59,6 +60,7 @@ const Aside: React.FC<AsideProps> = ({
   const [folders, setFolders] = useState<Folder[]>([]);
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [searchResults] = useState<NotesType[]>([]);
 
   const fetchFolders = async () => {
     try {
@@ -93,18 +95,15 @@ const Aside: React.FC<AsideProps> = ({
   }, [refetchKey]);
 
 
-  const handleFolderCreated = (newFolder: { folder: Folder }) => {
-    const folder: Folder = newFolder?.folder || newFolder;
-
-    if (folder?.id && folder?.name) {
-      setFolders((prev) => [...prev, folder]);
-      setContextFolders((prev: Folder[]) => [...prev, folder]); 
-      onSelectFolder(folder.id, folder.name);
-      triggerRefetch();
-    }
-
-    setShowNewFolder(false);
-  };
+const handleFolderCreated = (folder: Folder) => {
+  if (folder?.id && folder?.name) {
+    setFolders(prev => [...prev, folder]);
+    setContextFolders(prev => [...prev, folder]);
+    onSelectFolder(folder.id, folder.name);
+    triggerRefetch();
+  }
+  setShowNewFolder(false);
+};
 
   return (
     <>
@@ -124,15 +123,15 @@ const Aside: React.FC<AsideProps> = ({
 
           <AsideFolders
             searchQuery={searchQuery}
+            searchResults={searchResults}
             showNewFolder={showNewFolder}
             setShowNewFolder={setShowNewFolder}
             handleFolderCreated={handleFolderCreated}
             folders={folders}
             onSelectFolder={onSelectFolder}
             selectedFolderId={selectedFolderId}
-            selectedFolderName={selectedFolderName}
-            fetchFolders={fetchFolders}
-          />
+            selectedFolderName={selectedFolderName || ""}
+            fetchFolders={fetchFolders}/>
 
         </div>
 

@@ -10,7 +10,7 @@ interface AsideFoldersProps {
   searchResults: NotesType[];
   showNewFolder: boolean;
   setShowNewFolder: React.Dispatch<React.SetStateAction<boolean>>;
-  handleFolderCreated: (folder: {folder: Folder}) => void;
+  handleFolderCreated: (folder: Folder) => void;
   folders: Folder[];
   onSelectFolder: (id: string, name: string) => void;
   selectedFolderId: string | null;
