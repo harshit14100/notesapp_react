@@ -143,7 +143,7 @@ const handleRestore = async () => {
   setIsRestoring(true);
   try {
     await api.patch(`/${noteId}`, {
-      deletedAt: null,
+      deleted: false,
     });
     triggerRefetch();
 
@@ -151,7 +151,7 @@ const handleRestore = async () => {
     if (folderId) {
       navigate(`/${folderId}/${noteId}`);
     } else {
-      navigate(`/type/recent/${noteId}`);
+      navigate(`/recent/${noteId}`);
     }
   } catch (error) {
     console.error("Restore failed", error);

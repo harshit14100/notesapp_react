@@ -26,7 +26,7 @@ const AddNote: React.FC<AddNoteProps> = ({ folderId, onNoteAdded }) => {
       createdAt
     };
     onNoteAdded?.();
-    navigate(`/notes/${folderId}/${noteWithDate.id}`);
+    navigate(`/${folderId}/${noteWithDate.id}`);
     toast.success("New note created");
   }
    catch (err) {

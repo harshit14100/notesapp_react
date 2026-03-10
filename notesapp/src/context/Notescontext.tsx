@@ -20,6 +20,7 @@ interface NotesContextType {
 
 const NotesContext = createContext<NotesContextType | null>(null);
 
+
 export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [refetchKey, setRefetchKey] = useState(0);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -44,6 +45,9 @@ const [folders, setFolders] = useState<Folder[]>([]);
     setSelectedFolderName(null);
   };
 
+const activeFolderName = selectedFolderName || folders?.find((f) => f.id === selectedFolderId)?.name || null;
+
+
   const toggleTheme = () => {
     if (isDarkMode) {
       document.documentElement.classList.remove("dark");
@@ -61,7 +65,7 @@ const [folders, setFolders] = useState<Folder[]>([]);
         triggerRefetch,
         folders,
         setFolders,
-        selectedFolderName,
+        selectedFolderName: activeFolderName,
         selectedFolderId,
         setSelectedFolder,
         clearSelectedFolder,

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {getNotesByFolder } from "../../Api/NoteAPI";
 import {getRecentNotes,getDeletedNotes, searchbar, getFavoriteNotes, getArchiveNotes} from "../../Api/NoteAPI"
 // import { RiDeleteBin7Line } from "react-icons/ri";
@@ -36,49 +36,43 @@ const Middle = () => {
   const [page, setPage] = useState(1);
   // const limit = 10;
 
-const fetchNotes = async () => {
-  try {
-    setIsLoading(true);
-    setError("");
-    let data: any[] = [];
+  const fetchIdRef = useRef(0);
 
-    if (routeType === "trash") {
-      data = await getDeletedNotes();
-    } 
-    else if (routeType === "favorite") {
-      data = await getFavoriteNotes();
-    }
-    else if (routeType === "archive") {
-      data = await getArchiveNotes();
-    }
-    else if (!folderId || folderId === "recent") {
-      data = await getRecentNotes();
-    } 
-    else {
-      const activeFolder = selectedFolderId || folderId;
-      if (activeFolder) {
-        data = await getNotesByFolder(activeFolder);
+const fetchNotes = async () => {
+  const fetchId = ++fetchIdRef.current;
+  try {
+      setIsLoading(true);
+      setError("");
+      let data: any[] = [];
+
+      if (routeType === "trash") {
+        data = await getDeletedNotes();
+      } else if (routeType === "favorite") {
+        data = await getFavoriteNotes();
+      } else if (routeType === "archive") {
+        data = await getArchiveNotes();
+      } else if (!folderId || folderId === "recent") {
+        data = await getRecentNotes();
       } else {
-        data = [];
+        const activeFolder = selectedFolderId || folderId;
+        data = activeFolder ? await getNotesByFolder(activeFolder) : [];
+      }
+      if (fetchId !== fetchIdRef.current) return;
+
+      const filtered =
+        routeType === "trash" || routeType === "archive" || routeType === "favorite"
+          ? data || []
+          : (data || []).filter((note: Note) => !note.deleted && !note.archived);
+      setNotes(filtered);
+    } catch {
+      if (fetchId !== fetchIdRef.current) return;
+      setError("Failed to load notes.");
+    } finally {
+      if (fetchId === fetchIdRef.current) {
+        setIsLoading(false);
       }
     }
-
-    const filtered = routeType === "trash" || routeType === "archive" || routeType === "favorite"
-        ? data || []
-        : (data || []).filter((note: Note) => !note.deleted && !note.archived);
-
-    if (page === 1) {
-      setNotes(filtered);
-    } else {
-      setNotes((prev) => [...prev, ...filtered]);
-    }
-
-  } catch {
-    setError("Failed to load notes.");
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
   const bottom =
@@ -142,16 +136,13 @@ useEffect(() => {
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
+    setNotes((prev) => prev.filter((note) => note.id !== id));
+    setSearchResults((prev) => prev.filter((note) => note.id !== id));
 
-    setNotes(prev => prev.filter(note => note.id !== id));
-    setSearchResults(prev => prev.filter(note => note.id !== id));
-
-    const success = await deleteNote(id);
-    if (success) {
-      fetchNotes();
-      triggerRefetch();
-
-    } else {
+    try {
+      await deleteNote(id);
+      triggerRefetch(); 
+    } catch {
       fetchNotes();
     }
   };
