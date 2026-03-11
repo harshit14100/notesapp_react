@@ -35,6 +35,8 @@ const Middle = () => {
   const skeletonArray = [1,2,3,4,5]; 
   const [page, setPage] = useState(1);
   // const limit = 10;
+  console.log(page);
+  
 
   const fetchIdRef = useRef(0);
 

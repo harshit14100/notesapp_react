@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getNoteById } from "../../Api/NoteAPI";
+import { getNoteById ,restoreNote } from "../../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
 import { TbStar, TbStarFilled } from "react-icons/tb";
 import { MdOutlineUnarchive } from "react-icons/md";
@@ -29,8 +29,8 @@ interface Note {
   id: string;
   title: string;
   content: string;
-  favorite?: boolean;
-  archived?: boolean;
+  isFavorite?: boolean;
+  isArchived?: boolean;
   deleted?: boolean;
   createdAt: string;
   folder?: Folder;
@@ -55,9 +55,9 @@ const RightSide = () => {
   e.stopPropagation();
   if (!noteId || !note) return;
 
-  const newValue = !note.favorite;
+  const newValue = !note.isFavorite;
   try {
-    await api.patch(`/${noteId}`, {
+    await api.patch(`/notes/${noteId}`, {
       favorite: newValue,
     });
 
@@ -66,7 +66,7 @@ const RightSide = () => {
       if (!prev) return prev;
       return {
         ...prev,
-        favorite: newValue,
+        isFavorite: newValue,
       };
     });
     triggerRefetch();
@@ -85,7 +85,7 @@ const handleArchive = async (e: React.MouseEvent) => {
   e.stopPropagation();
 
   if (!noteId || !note) return;
-  const newValue = !note.archived;
+  const newValue = !note.isArchived;
   const folderId = note?.folder?.id;
 
   setOverlay(false);
@@ -97,7 +97,7 @@ const handleArchive = async (e: React.MouseEvent) => {
       if (!prev) return prev;
       return {
         ...prev,
-        archived: newValue,
+        isArchived: newValue,
       };
     });
 
@@ -142,10 +142,9 @@ const handleRestore = async () => {
 
   setIsRestoring(true);
   try {
-    await api.patch(`/${noteId}`, {
-      deleted: false,
-    });
+    await restoreNote(noteId);
     triggerRefetch();
+    toast.success("Note restored");
 
     const folderId = note?.folder?.id;
     if (folderId) {
@@ -155,6 +154,7 @@ const handleRestore = async () => {
     }
   } catch (error) {
     console.error("Restore failed", error);
+    toast.error("Failed to restore note");
   } finally {
     setIsRestoring(false);
   }
@@ -323,24 +323,24 @@ if (note.deleted || routeType === "trash") {
                 className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
                 onClick={handleFavorite}>
 
-                {note?.favorite ? (
+                {note?.isFavorite ? (
                   <TbStarFilled className="text-yellow-400" />
                 ) : (
                   <TbStar />
                 )}
-                {note?.favorite ? "Remove from Favorites" : "Add to Favorites"}
+                {note?.isFavorite ? "Remove from Favorites" : "Add to Favorites"}
               </button>
 
               <button
                 className="flex gap-4 items-center py-2 cursor-pointer hover:bg-primary-hover rounded px-2"
                 onClick={handleArchive}>
 
-                {note?.archived ? (
+                {note?.isArchived ? (
                   <MdOutlineUnarchive className="text-blue-400" />
                 ) : (
                   <FiArchive />
                 )}
-                {note?.archived ? "Unarchive" : "Archive"}
+                {note?.isArchived ? "Unarchive" : "Archive"}
 
               </button>
 
