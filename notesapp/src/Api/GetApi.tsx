@@ -5,10 +5,10 @@ export const getFolders = async () => {
   return res.data.folders;
 };
 
-export const getRecentNotes = async () => {
-  const res = await api.get("/notes/recent");
-  return res.data.recentNotes;
-};
+// export const getRecentNotes = async () => {
+//   const res = await api.get("/notes/recent");
+//   return res.data.recentNotes;
+// };
 
 
 export const getNoteById = async (id: string) => {

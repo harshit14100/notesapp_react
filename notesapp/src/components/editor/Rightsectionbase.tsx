@@ -3,7 +3,6 @@ import { getNoteById ,restoreNote } from "../../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
 import { TbStar, TbStarFilled } from "react-icons/tb";
 import { MdOutlineUnarchive } from "react-icons/md";
-// import { LuHistory } from "react-icons/lu";
 import api from "../../Api/API";
 import toast from "react-hot-toast";
 import { useNotes } from "../../context/Notescontext";
@@ -28,7 +27,7 @@ interface Folder {
 interface Note {
   id: string;
   title: string;
-  content: string;
+  content: string; 
   isFavorite?: boolean;
   isArchived?: boolean;
   deleted?: boolean;
@@ -90,7 +89,7 @@ const handleArchive = async (e: React.MouseEvent) => {
 
   setOverlay(false);
   try {
-    await api.patch(`/${noteId}`, {
+    await api.patch(`/notes/${noteId}`, {
       archived: newValue,
     });
     setNote((prev) => {
@@ -133,7 +132,7 @@ const handleArchive = async (e: React.MouseEvent) => {
         navigate(`/recent`);
       }
     } catch (err) {
-      // silent
+      toast.error("could'nt navigate"+ err)
     }
   };
 
@@ -163,7 +162,7 @@ const handleRestore = async () => {
   const handleMoveNote = async (newFolderId: string, newFolderName: string) => {
   if (!note || note.folder?.id === newFolderId) return;
   try {
-    await api.patch(`/${note.id}`, { folderId: newFolderId });
+    await api.patch(`/notes/${note.id}`, { folderId: newFolderId });
     setNote((prev) => {
       if (!prev) return prev;
       return {
@@ -198,7 +197,7 @@ const handleRestore = async () => {
     try {
       setIsSaving(true);
 
-      const updated = await api.patch(`/${noteId}`, {
+      const updated = await api.patch(`/notes/${noteId}`, {
         title: editTitle,
         content: editContent,
       });
@@ -209,7 +208,7 @@ const handleRestore = async () => {
       }
       triggerRefetch();
     } catch (err) {
-      // silent
+      toast.error("could'nt Refetch"+ err)
     } finally {
       setIsSaving(false);
     }

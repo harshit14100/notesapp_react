@@ -28,6 +28,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
 const [folders, setFolders] = useState<Folder[]>([]);
+
   
 
   useEffect(() => {
@@ -74,6 +75,7 @@ const activeFolderName = selectedFolderName || folders?.find((f) => f.id === sel
         isDarkMode,
         toggleTheme,
       }}>
+
       {children}
     </NotesContext.Provider>
   );

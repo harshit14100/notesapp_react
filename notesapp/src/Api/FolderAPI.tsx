@@ -8,7 +8,7 @@ export const deleteFolder = async (id: string): Promise<boolean> => {
     toast.success("Folder deleted");
     return true;
   } catch (e) {
-    toast.error("Failed to delete folder");
+    toast.error("Failed to delete folder"+ e);
     return false;
   }
 };
@@ -20,7 +20,7 @@ export const getFolders = async (): Promise<Folder[]> => {
     const res = await api.get("/folders");
     return res.data.folders || [];
   } catch (e) {
-    toast.error("Failed to fetch folders");
+    toast.error("Failed to fetch folders"+ e);
     return [];
   }
 };
@@ -31,7 +31,7 @@ export const createFolder = async (name: string) => {
     toast.success("Folder created");
     return res.data;
   } catch (e) {
-    toast.error("Failed to create folder");
+    toast.error("Failed to create folder"+ e);
     return null;
   }
 };
@@ -42,7 +42,7 @@ export const updateFolder = async (folderId: string, folderName: string) => {
     toast.success("Folder updated");
     return res.data;
   } catch (e) {
-    toast.error("Failed to update folder");
+    toast.error("Failed to update folder"+ e);
     return null;
   }
 };

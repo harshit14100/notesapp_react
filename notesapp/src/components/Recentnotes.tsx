@@ -1,10 +1,9 @@
-import axios from 'axios'
 import { useEffect, useState } from 'react'
-// import Card from './Card'
 import type { NotesType } from '../types/types'
 import { TbFileText } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../context/Notescontext';
+import { getRecentNotes } from '../Api/NoteAPI';
 
 interface RecentnotesProps {
   searchResults?: NotesType[];
@@ -12,9 +11,6 @@ interface RecentnotesProps {
 }
 
 const Recentnotes: React.FC<RecentnotesProps> = ({ searchResults, searchQuery }) => {
-
-  const API = 'https://nowted-server.remotestate.com/notes/recent' 
-  // const API = 'https://nowted-server.remotestate.com/folders' 
 
   const [rec, setRec] = useState<NotesType[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -26,24 +22,11 @@ const Recentnotes: React.FC<RecentnotesProps> = ({ searchResults, searchQuery })
 
     try {
       setIsLoading(true);
-      const response = await axios.get(API);
-      const notesData = response?.data?.recentNotes || response?.data || [];
+      const data = await getRecentNotes();
+      setRec(data);
 
-      // console.log("getnotes is running");
-
-      if (Array.isArray(notesData)) {
-        const filtered = notesData.filter(
-          (note: NotesType) => !note.deletedAt && !note.isArchived
-        );
-        setRec(filtered);
-      } else {
-        setRec([]);
-        // console.error("Expected an array, but received:", notesData);
-      }
-    } catch (err) {
-      // console.error("Failed to fetch notes:", err);
-      setError('Failed to load notes.')
-
+    } catch {
+      setError('Failed to load notes.');
     } finally {
       setIsLoading(false);
     }

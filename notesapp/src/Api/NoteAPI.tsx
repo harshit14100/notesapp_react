@@ -2,6 +2,7 @@ import type { NotesType } from "../types/types";
 import api from "./API";
 import toast from "react-hot-toast";
 
+const limit = 10;
 
 type NotePatch = {
   title?: string;
@@ -21,9 +22,9 @@ export const deleteNote = async (id: string): Promise<boolean> => {
   }
 };
 
-const getNotesByFilter = async (filter: string): Promise<NotesType[]> => {
+const getNotesByFilter = async (filter: string, page=1): Promise<NotesType[]> => {
   try {
-    const res = await api.get(`/notes?${filter}=true&limit=1000`);
+    const res = await api.get(`/notes?${filter}=true&limit=${limit}&pages=${page}`);
     return res.data.notes || [];
   } catch (e) {
     if (e instanceof Error) console.log(e.message);
@@ -43,10 +44,10 @@ export const getRecentNotes = async (): Promise<NotesType[]> => {
   }
 };
 
-export const getNotesByFolder = async (folderId: string): Promise<NotesType[]> => {
+export const getNotesByFolder = async (folderId: string, page = 1): Promise<NotesType[]> => {
   try {
     const res = await api.get("/notes", {
-      params: { folderId, limit: 1000 },
+      params: { folderId, limit: 10,page },
     });
     return res.data.notes || [];
   } catch (e) {
@@ -67,17 +68,18 @@ export const getNoteById = async (id: string): Promise<string | null> => {
   }
 };
 
-export const getDeletedNotes = async (): Promise<NotesType[]> => {
-  return getNotesByFilter("deleted");
+export const getDeletedNotes = async (page = 1): Promise<NotesType[]> => {
+  return getNotesByFilter("deleted", page);
 };
 
-export const getFavoriteNotes = async () => {
-  return getNotesByFilter("isFavorite");
+export const getFavoriteNotes = async (page = 1) => {
+  return getNotesByFilter("isFavorite", page);
 };
 
-export const getArchiveNotes = async () => {
-  return getNotesByFilter("isArchived");
+export const getArchiveNotes = async (page = 1) => {
+  return getNotesByFilter("isArchived", page);
 };
+
 export const searchNotes = async (title: string) => {
   try {
     const res = await api.get(`/notes?search=${title}&limit=10`);

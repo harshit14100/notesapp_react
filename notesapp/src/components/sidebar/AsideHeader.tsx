@@ -45,14 +45,14 @@ const AsideHeader: React.FC<AsideHeaderProps> = ({
       </div>
 
       {showSearch && (
-        <div className="px-5 pt-3 absolute top-1.5 left-130">
+        <div className="px-5 pt-3 absolute top-21 left-3 z-20">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search notes..."
             autoFocus
-            className="w-70 p-2 rounded bg-bg-popover border border-border-input text-text-main text-sm focus:outline-none focus:border-primary-hover transition-colors"
+            className="w-76 h-12 p-2 rounded bg-button border border-border-input text-text-main text-sm focus:outline-none focus:border-primary-hover transition-colors"
           />
         </div>
       )}

@@ -1,31 +1,13 @@
-// import Folders from './Folders';
-// import NewFolder from "./NewFolder";
-import React, { useEffect, useState } from "react";
-// import noteslogo from "../../assets/logo.svg";
-// import { IoSearch } from "react-icons/io5";
-// import { TbStar } from "react-icons/tb";
-// import { RiDeleteBin7Line } from "react-icons/ri";
-// import { FiArchive } from "react-icons/fi";
-// import { PiFolderSimplePlusBold } from "react-icons/pi";
-// import { GoSun, GoMoon } from "react-icons/go";
 
-// import { useNavigate } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
 import type { Folder } from "../../types/types";
-// import AddNote from "../NewNote";
-// import Recentnotes from "../Recentnotes";
-// import Folders from "../Folders";
-// import NewFolder from "../NewFolder";
 import { getFolders } from "../../Api/FolderAPI";
-// import { createNote} from "../../Api/NoteAPI";
 import "../../App.css";
-// import { NavLink } from "react-router-dom";
-// import type { NotesType } from "../../types/types";
 import { useNotes } from "../../context/Notescontext";
 import AsideHeader from "./AsideHeader";
 import AsideFolders from "./AsideFolders";
 import AsideMore from "./AsideMore";
 import type { NotesType } from "../../types/types";
-// import toast from "react-hot-toast";
 
 interface AsideProps {
   folders: Folder[];
@@ -44,7 +26,6 @@ const Aside: React.FC<AsideProps> = ({
   onClearFolder,
   selectedFolderId,
 }) => {
-  // const navigate = useNavigate();
 
   const {
     searchQuery,
@@ -53,8 +34,7 @@ const Aside: React.FC<AsideProps> = ({
     toggleTheme,
     triggerRefetch,
     selectedFolderName,
-    refetchKey,
-    setFolders: setContextFolders 
+    setFolders: setContextFolders ,
   } = useNotes();
 
   const [folders, setFolders] = useState<Folder[]>([]);
@@ -62,7 +42,7 @@ const Aside: React.FC<AsideProps> = ({
   const [showSearch, setShowSearch] = useState(false);
   const [searchResults] = useState<NotesType[]>([]);
 
-  const fetchFolders = async () => {
+  const fetchFolders =  useCallback( async () => {
     try {
       const data = await getFolders();
       setFolders(data);
@@ -70,37 +50,27 @@ const Aside: React.FC<AsideProps> = ({
     } catch {
       setFolders([]);
       setContextFolders([]); 
+      
     }
-  };
+  },[setContextFolders, setFolders]);
+  
+  
+  // useEffect(()=>{
+  //     fetchFolders()
+  //   },[])
+    
 
-
-// const handleNewNote = async () => {
-//   if (!selectedFolderId) {
-//     toast.error("Select a folder first!");
-//     return;
-//   }
-//   try {
-//     const newNote = await createNote(selectedFolderId,"Untitled","",new Date());
-
-//     triggerRefetch();
-//     navigate(`/notes/${selectedFolderId}/${newNote.id}`);
-//   } catch (e) {
-//     console.error(e);
-//     toast.error("Failed to create note");
-//   }
-// };
-
-  useEffect(() => {
+    useEffect(() => {
     fetchFolders();
-  }, [refetchKey]);
+  }, [ fetchFolders]);
 
 
 const handleFolderCreated = (folder: Folder) => {
   if (folder?.id && folder?.name) {
-    setFolders(prev => [...prev, folder]);
-    setContextFolders(prev => [...prev, folder]);
-    onSelectFolder(folder.id, folder.name);
-    triggerRefetch();
+    const updated = [...folders, folder];
+      setFolders(updated);
+      setContextFolders(updated);
+      onSelectFolder(folder.id, folder.name);
   }
   setShowNewFolder(false);
 };
@@ -132,7 +102,6 @@ const handleFolderCreated = (folder: Folder) => {
             selectedFolderId={selectedFolderId}
             selectedFolderName={selectedFolderName || ""}
             fetchFolders={fetchFolders}/>
-
         </div>
 
         <div>

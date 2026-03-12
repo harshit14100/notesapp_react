@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {getNotesByFolder } from "../../Api/NoteAPI";
 import {getRecentNotes,getDeletedNotes, searchbar, getFavoriteNotes, getArchiveNotes} from "../../Api/NoteAPI"
 // import { RiDeleteBin7Line } from "react-icons/ri";
@@ -7,6 +7,7 @@ import { deleteNote } from "../../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotes } from "../../context/Notescontext";
 import NoteCard from "./Card";
+import type { NotesType } from "../../types/types";
 // import { useNotes } from "../../context/Notescontext";
 
 interface Note {
@@ -34,18 +35,18 @@ const Middle = () => {
   const { selectedFolderId, selectedFolderName, refetchKey, triggerRefetch, searchQuery } = useNotes();
   const skeletonArray = [1,2,3,4,5]; 
   const [page, setPage] = useState(1);
-  // const limit = 10;
-  console.log(page);
+  const limit = 10;
+  console.log(page, limit);
   
 
   const fetchIdRef = useRef(0);
 
-const fetchNotes = async () => {
+const fetchNotes = useCallback( async () => {
   const fetchId = ++fetchIdRef.current;
   try {
       setIsLoading(true);
       setError("");
-      let data: any[] = [];
+      let data: NotesType[] = [];
 
       if (routeType === "trash") {
         data = await getDeletedNotes();
@@ -74,14 +75,26 @@ const fetchNotes = async () => {
         setIsLoading(false);
       }
     }
-  };
+  },[selectedFolderId, folderId, routeType]);
 
+  useEffect(()=>{
+    window.addEventListener("scroll", handleScroll2) 
+
+  },[])
+
+  const handleScroll2 = (()=>{
+
+  })
+  
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-  const bottom =
-    e.currentTarget.scrollHeight - e.currentTarget.scrollTop ===
-    e.currentTarget.clientHeight;
-
-  if (bottom) {
+    const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 5;
+    
+    console.log("scroll height "+document.documentElement.scrollHeight);
+    console.log("inner  height "+ window.innerHeight);
+    console.log("scroll top "+document.documentElement.scrollTop);
+  
+  if (isNearBottom) {
     setPage(prev => prev + 1);
   }
 };
@@ -89,7 +102,7 @@ const fetchNotes = async () => {
 useEffect(() => {
   fetchNotes()
   setPage(1);
-}, [selectedFolderId, folderId, routeType, refetchKey]);
+}, [ refetchKey ,fetchNotes]);
 
 useEffect(() => {
   if (!searchQuery.trim()) {
@@ -121,7 +134,7 @@ useEffect(() => {
       else {
         results = results.filter((note) => !note.deleted && !note.archived);
         if (activeFolder && activeFolder !== "recent") {
-          results = results.filter((note: any) => note.folderId === activeFolder);
+          results = results.filter((note: Note) => note.folderId === activeFolder);
         }
       }
       setSearchResults(results);
