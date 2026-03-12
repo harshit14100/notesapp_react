@@ -16,6 +16,7 @@ export const deleteFolder = async (id: string): Promise<boolean> => {
 
 
 export const getFolders = async (): Promise<Folder[]> => {
+  console.log("main")
   try {
     const res = await api.get("/folders");
     return res.data.folders || [];

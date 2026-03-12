@@ -3,11 +3,12 @@ import Middle from "../components/middle/Mid";
 import RightSide from "../components/editor/Rightsectionbase";
 import { NotesProvider, useNotes } from "../context/Notescontext";
 import { useNavigate } from "react-router-dom";
-import { getFolders } from "../Api/FolderAPI";
-import { useEffect, useState } from "react";
+// import { getFolders } from "../Api/FolderAPI";
+import {  useState } from "react";
 import type { Folder } from "../types/types";
 
 const HomeLayout = () => {
+  console.log("dsac")
   const { selectedFolderId, setSelectedFolder, clearSelectedFolder } = useNotes();
   const navigate = useNavigate();
 
@@ -17,16 +18,16 @@ const HomeLayout = () => {
     navigate(`/${id}`)
   };
 
-  const [folders, setFolders] = useState<Folder[]>([]);
+  const [folders] = useState<Folder[]>([]);
 
-  useEffect(() => {
-  const fetchFolders = async () => {
-    const data = await getFolders();
-    setFolders(data);
-  };
+//   useEffect(() => {
+//   const fetchFolders = async () => {
+//     const data = await getFolders();
+//     setFolders(data);
+//   };
 
-  fetchFolders();
-}, []);
+//   fetchFolders();
+// }, []);
 
   return (
     <div className="flex w-full h-full bg-bg-main overflow-hidden">
