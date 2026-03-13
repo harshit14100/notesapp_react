@@ -21,8 +21,8 @@ const NewFolder= ({ onFolderCreated }: Props)=> {
 
     onFolderCreated(newFolder);
     setName("");
-  } catch (err) {
-    toast.error("could'nt navigate"+ err)
+  } catch  {
+    toast.error("could'nt navigate")
   }
 };
 

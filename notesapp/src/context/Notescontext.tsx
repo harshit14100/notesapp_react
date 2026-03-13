@@ -81,8 +81,8 @@ const activeFolderName = selectedFolderName || folders?.find((f) => f.id === sel
   );
 };
 
-export const useNotes = () => {
-  const ctx = useContext(NotesContext);
+export const useNotes =  () => {
+  const ctx =  useContext(NotesContext);
   if (!ctx) {
     throw new Error("useNotes must be used inside NotesProvider");
   }

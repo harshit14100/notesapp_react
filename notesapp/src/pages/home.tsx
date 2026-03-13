@@ -1,11 +1,13 @@
 import Aside from "../components/sidebar/Aside";
 import Middle from "../components/middle/Mid";
 import RightSide from "../components/editor/Rightsectionbase";
-import { NotesProvider, useNotes } from "../context/Notescontext";
+import { UserContextProvider } from "../context/NotesContextProvider";
+import { useNotes } from "../utils/UseNotes";
 import { useNavigate } from "react-router-dom";
 // import { getFolders } from "../Api/FolderAPI";
 import {  useState } from "react";
 import type { Folder } from "../types/types";
+
 
 const HomeLayout = () => {
   console.log("dsac")
@@ -49,11 +51,12 @@ const HomeLayout = () => {
   );
 };
 
+
 function Home() {
   return (
-    <NotesProvider>
+    <UserContextProvider>
       <HomeLayout />
-    </NotesProvider>
+    </UserContextProvider>
   );
 }
 

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import type { Folder } from "../../types/types";
 import { getFolders } from "../../Api/FolderAPI";
 import "../../App.css";
-import { useNotes } from "../../context/Notescontext";
+import { useNotes } from "../../utils/UseNotes";
 import AsideHeader from "./AsideHeader";
 import AsideFolders from "./AsideFolders";
 import AsideMore from "./AsideMore";

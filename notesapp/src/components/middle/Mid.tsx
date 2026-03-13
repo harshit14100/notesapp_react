@@ -5,10 +5,9 @@ import {getRecentNotes,getDeletedNotes, searchbar, getFavoriteNotes, getArchiveN
 // import { TbStarFilled } from "react-icons/tb";
 import { deleteNote } from "../../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
-import { useNotes } from "../../context/Notescontext";
+import { useNotes } from "../../utils/UseNotes";
 import NoteCard from "./Card";
 import type { NotesType } from "../../types/types";
-// import { useNotes } from "../../context/Notescontext";
 
 interface Note {
   id: string;

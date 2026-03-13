@@ -5,7 +5,7 @@ import { TbStar, TbStarFilled } from "react-icons/tb";
 import { MdOutlineUnarchive } from "react-icons/md";
 import api from "../../Api/API";
 import toast from "react-hot-toast";
-import { useNotes } from "../../context/Notescontext";
+import { useNotes } from "../../utils/UseNotes";
 
 import { PiDotsThreeCircle } from "react-icons/pi";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -131,8 +131,8 @@ const handleArchive = async (e: React.MouseEvent) => {
       } else {
         navigate(`/recent`);
       }
-    } catch (err) {
-      toast.error("could'nt navigate"+ err)
+    } catch {
+      toast.error("could'nt navigate" )
     }
   };
 
@@ -207,8 +207,8 @@ const handleRestore = async () => {
         setNote(updatedNote);
       }
       triggerRefetch();
-    } catch (err) {
-      toast.error("could'nt Refetch"+ err)
+    } catch {
+      toast.error("could'nt Refetch" )
     } finally {
       setIsSaving(false);
     }
@@ -243,8 +243,8 @@ const handleRestore = async () => {
     setEditTitle(noteData.title || "");
     setEditContent(noteData.content || "");
 
-  } catch (err) {
-    console.error(err);
+  } catch {
+    console.error("error");
   } finally {
     setIsLoading(false);
   }
@@ -273,13 +273,6 @@ if (note.deleted || routeType === "trash") {
     <div className="w-full h-full bg-bg-right flex flex-col p-[5%] gap-7 transition-colors">
 
       <div className="flex justify-between items-center">
-        {/* <input
-          className="text-3xl font-bold text-text-main bg-transparent border-none outline-none w-full"
-          value={editTitle}
-          onChange={(e) => setEditTitle(e.target.value)}
-          onBlur={handleSave}
-        /> */}
-
           <motion.input
           className="text-3xl font-bold text-text-main bg-transparent border-none outline-none w-full "
           value={editTitle}

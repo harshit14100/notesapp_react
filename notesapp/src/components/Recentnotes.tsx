@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { NotesType } from '../types/types'
 import { TbFileText } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
-import { useNotes } from '../context/Notescontext';
+import { useNotes } from '../utils/UseNotes';
 import { getRecentNotes } from '../Api/NoteAPI';
 
 interface RecentnotesProps {
