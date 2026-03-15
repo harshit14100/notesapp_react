@@ -12,7 +12,7 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegFolder } from "react-icons/fa";
 import { FiArchive } from "react-icons/fi";
 import { RiDeleteBin7Line } from "react-icons/ri";
-import { DeleteNote } from "../../Api/Delete";
+import { deleteNote } from "../../Api/NoteAPI";
 import { FaChevronDown } from "react-icons/fa";
 import { motion } from "framer-motion";
 import LoadingNoteState from "./LoadingState";
@@ -56,8 +56,8 @@ const RightSide = () => {
 
   const newValue = !note.isFavorite;
   try {
-    await api.patch(`/notes/${noteId}`, {
-      favorite: newValue,
+    await api.patch(`/notes/${noteId}`, { 
+      isFavorite: newValue 
     });
 
 
@@ -90,7 +90,7 @@ const handleArchive = async (e: React.MouseEvent) => {
   setOverlay(false);
   try {
     await api.patch(`/notes/${noteId}`, {
-      archived: newValue,
+      isArchived: newValue,
     });
     setNote((prev) => {
       if (!prev) return prev;
@@ -121,7 +121,7 @@ const handleArchive = async (e: React.MouseEvent) => {
     try {
 
       const folderId = note?.folder?.id;
-      await DeleteNote(noteId);
+      await deleteNote(noteId);
 
       setNote(null);
       triggerRefetch();
@@ -202,13 +202,13 @@ const handleRestore = async () => {
         content: editContent,
       });
 
-      const updatedNote = updated?.data?.note || updated?.data || updated;
-      if (updatedNote) {
-        setNote(updatedNote);
-      }
+      const updatedNote = updated?.data?.note || updated?.data ;
+      console.log(updatedNote);
+      
+      setNote((prev) => prev ? { ...prev, title: editTitle, content: editContent } : prev);
       triggerRefetch();
     } catch {
-      toast.error("could'nt Refetch" )
+      // toast.error("could'nt Refetch" )
     } finally {
       setIsSaving(false);
     }
@@ -221,36 +221,36 @@ const handleRestore = async () => {
   }, []);
 
   useEffect(() => {
-
     const loadNote = async () => {
-  if (!noteId || noteId === "recent") {
-    setNote(null);
-    return;
-  }
-
-  try {
-    setIsLoading(true);
-
-    const res = await getNoteById(noteId);
-    const noteData = res as Note | null;
-
-    if (!noteData) {
+      if (!noteId || noteId === "recent") {
       setNote(null);
       return;
     }
 
-    setNote(noteData);
-    setEditTitle(noteData.title || "");
-    setEditContent(noteData.content || "");
+    setIsLoading(true);
+    setNote(null); 
 
-  } catch {
-    console.error("error");
-  } finally {
-    setIsLoading(false);
-  }
-};
-    loadNote();
-  }, [noteId]);
+    try {
+      const noteData = await getNoteById(noteId);
+
+      if (!noteData) {
+        setNote(null);
+        return;
+      }
+
+      setNote(noteData);
+      setEditTitle(noteData.title || "");
+      setEditContent(noteData.content || "");
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  loadNote();
+}, [noteId]);
 
   if (isLoading) {
   return <LoadingNoteState />;

@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {getNotesByFolder } from "../../Api/NoteAPI";
-import {getRecentNotes,getDeletedNotes, searchbar, getFavoriteNotes, getArchiveNotes} from "../../Api/NoteAPI"
-// import { RiDeleteBin7Line } from "react-icons/ri";
-// import { TbStarFilled } from "react-icons/tb";
+import {getRecentNotes,getDeletedNotes, searchNotes, getFavoriteNotes, getArchiveNotes} from "../../Api/NoteAPI"
 import { deleteNote } from "../../Api/NoteAPI";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotes } from "../../utils/UseNotes";
@@ -113,13 +111,11 @@ useEffect(() => {
   const delay = setTimeout(async () => {
     try {
       setIsSearching(true);
-      const data = await searchbar(searchQuery);
+      const data = await searchNotes(searchQuery);
 
       let results: Note[] = Array.isArray(data)
         ? data
         : data?.notes || data?.data || [];
-
-      const activeFolder = selectedFolderId || folderId;
 
       if (routeType === "trash") {
         results = results.filter((note) => note.deleted);
@@ -132,9 +128,6 @@ useEffect(() => {
       } 
       else {
         results = results.filter((note) => !note.deleted && !note.archived);
-        if (activeFolder && activeFolder !== "recent") {
-          results = results.filter((note: Note) => note.folderId === activeFolder);
-        }
       }
       setSearchResults(results);
     } catch (err) {
@@ -146,7 +139,7 @@ useEffect(() => {
   }, 400);
 
   return () => clearTimeout(delay);
-}, [searchQuery, routeType, selectedFolderId, folderId]);
+}, [searchQuery, routeType]);
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();

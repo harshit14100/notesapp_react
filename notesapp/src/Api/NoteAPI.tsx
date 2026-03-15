@@ -57,15 +57,9 @@ export const getNotesByFolder = async (folderId: string, page = 1): Promise<Note
   }
 };
 
-export const getNoteById = async (id: string): Promise<NotesType | null> => {
-  try {
-    const res = await api.get(`/notes/${id}`);
-    return res.data.note || null;
-  } catch (e) {
-    if (e instanceof Error) console.log(e.message);
-    else toast.error("Internal Error");
-    return null;
-  }
+export const getNoteById = async (id: string) => {
+  const res = await api.get(`/notes/${id}`);
+  return res.data.note ?? null;  
 };
 
 export const getDeletedNotes = async (page = 1): Promise<NotesType[]> => {
